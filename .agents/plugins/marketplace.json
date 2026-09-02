@@ -1,0 +1,20 @@
+{
+  "name": "aster",
+  "interface": {
+    "displayName": "Aster"
+  },
+  "plugins": [
+    {
+      "name": "aster-plugin-smoke",
+      "source": {
+        "source": "local",
+        "path": "./plugins/aster-plugin-smoke"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

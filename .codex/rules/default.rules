@@ -1,0 +1,11 @@
+prefix_rule(
+    pattern = ["pwd"],
+    decision = "allow",
+    justification = "Allow reporting the current working directory",
+)
+
+prefix_rule(
+    pattern = ["readlink"],
+    decision = "allow",
+    justification = "Allow resolving symbolic link targets without modifying files",
+)

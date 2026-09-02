@@ -1,0 +1,13 @@
+{
+  "name": "aster",
+  "owner": {
+    "name": "Local developer"
+  },
+  "plugins": [
+    {
+      "name": "aster-plugin-smoke",
+      "source": "./plugins/aster-plugin-smoke",
+      "description": "Verify that Claude Code can load the Aster test plugin and its bundled skill."
+    }
+  ]
+}
