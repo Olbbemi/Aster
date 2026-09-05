@@ -1,8 +1,0 @@
-{
-  "name": "aster-plugin-smoke",
-  "description": "Verify that Claude Code can load the Aster test plugin and its bundled skill.",
-  "version": "0.1.0",
-  "author": {
-    "name": "Local developer"
-  }
-}
