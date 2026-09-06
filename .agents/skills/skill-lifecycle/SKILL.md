@@ -1,11 +1,11 @@
 ---
 name: skill-lifecycle
-description: Aster에서 스킬을 새로 만들거나 기존 스킬을 변경, 통합, 폐기할 때 단일 명세서를 기준으로 작업을 진행한다. 스킬 개발의 시작, 재개, 현재 단계 판단과 다음 작업 결정에 사용한다.
+description: |
+  Aster에서 스킬을 새로 만들거나 기존 스킬을 변경, 통합, 폐기할 때 단일 명세서를 기준으로 작업을 진행한다.
+  스킬 개발의 시작, 재개, 현재 단계 판단과 다음 작업 결정에 사용한다.
 ---
 
 # Skill Lifecycle
-
-<!-- 검토용 초안이다. 상대 참조는 Aster 저장소의 .agents/skills/skill-lifecycle/SKILL.md에 배치했을 때를 기준으로 작성했다. -->
 
 ## 목적과 적용 범위
 
@@ -17,8 +17,9 @@ description: Aster에서 스킬을 새로 만들거나 기존 스킬을 변경, 
 ## 핵심 진행 흐름
 
 - `SKILL.md`의 상대 참조는 `SKILL.md`가 있는 스킬 디렉토리를 기준으로 해석한다.
-- 사용자 요청과 기존 작업 기록으로 대상 명세서를 확인하고, 새 작업의 시작인지 기존 작업의 재개인지 구분한다.
+- 사용자 요청과 관련 명세서의 존재 여부 및 내용을 확인하여, 새 작업을 시작하는지 기존 작업을 재개하는지 구분한다.
+- 새 작업이면 [명세서 형식](references/specification.md)과 [템플릿](assets/lifecycle-template.md)에 따라 새 명세서를 생성한다. 기존 작업이면 해당 작업의 명세서를 사용한다.
 - [생명 주기 운영 규칙](references/lifecycle.md)을 읽고, 명세서의 `current_stage`에 해당하는 `references/stages/<단계 식별자>.md`를 읽는다.
-- 명세서를 생성하거나 기록할 때는 [명세서 형식](references/specification.md)을 따르며, 새 명세서는 [템플릿](assets/lifecycle-template.md)을 사용한다.
+- 명세서를 기록할 때는 [명세서 형식](references/specification.md)을 따른다.
 - 선택한 단계 문서의 조건과 근거를 확인하고 사용자 요청 범위에서 작업, 기록 및 전이를 진행한다.
 - 단계별 상세 문서는 현재 작업과 판단에 필요한 시점에 읽는다.
