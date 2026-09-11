@@ -1,13 +1,14 @@
 ---
-name: "<skill-name>"
-target_path: "<repository-relative-skill-path>"
+name: null
+target_path: null
 operation: "<create|update|integrate|deprecate>"
 current_stage: problem-definition
 ---
 
-# <skill-name> 생명 주기 명세서
+# <작업 주제> 생명 주기 명세서
 
-<!-- 꺾쇠로 표시한 값은 작성용 자리표시자다. 명세서 생성 시 대상 스킬과 작업에 맞는 값으로 바꾼다. -->
+<!-- 제목과 operation의 자리표시자는 실제 작업에 맞게 바꾼다. name과 target_path의 미정값은 references/specification.md의 프론트매터 기준에 따라 처리한다. -->
+<!-- current_stage는 references/lifecycle.md의 최초 기록의 단계 판단에 따라 정한다. 단계 이동 기록에는 최초 상태 산정과 실제 이후 전이를 구분한다. -->
 <!-- 작성 기준: skill-lifecycle 스킬 디렉토리의 references/specification.md, references/lifecycle.md 및 references/stages/<단계 식별자>.md. -->
 
 ## problem-definition (문제 정의)

@@ -6,7 +6,7 @@
 
 ### 진입 조건
 
-- 명세서 프론트매터의 `current_stage`가 `problem-definition`이다.
+- 명세서 프론트매터의 `current_stage`가 `problem-definition`이다. 최초 명세서의 선행 조건 대조는 [최초 기록의 단계 판단](../lifecycle.md#최초-기록의-단계-판단)을 따른다.
 - 스킬을 생성, 변경, 통합 또는 폐기할 필요가 제기되었다.
 
 ### 수행 작업
