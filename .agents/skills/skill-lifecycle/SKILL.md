@@ -18,8 +18,10 @@ description: |
 
 - `SKILL.md`의 상대 참조는 `SKILL.md`가 있는 스킬 디렉토리를 기준으로 해석한다.
 - 사용자 요청과 관련 명세서의 존재 여부 및 내용을 확인하여, 새 작업을 시작하는지 기존 작업을 재개하는지 구분한다.
-- 새 작업이면 [명세서 형식](references/specification.md)과 [템플릿](assets/lifecycle-template.md)에 따라 새 명세서를 생성한다. 기존 작업이면 해당 작업의 명세서를 사용한다.
-- [생명 주기 운영 규칙](references/lifecycle.md)을 읽고, 명세서의 `current_stage`에 해당하는 `references/stages/<단계 식별자>.md`를 읽는다.
+- [생명 주기 운영 규칙](references/lifecycle.md)을 읽는다. 새 작업이면 그 문서의 최초 기록 기준과 [명세서 형식](references/specification.md), [템플릿](assets/lifecycle-template.md)에 따라 명세서를 생성한다. 기존 작업이면 해당 작업의 명세서를 사용한다.
+- 명세서의 `current_stage`에 해당하는 `references/stages/<단계 식별자>.md`를 읽는다. 다른 단계에 관련된 내용을 기록하거나 판단할 때는 그 단계의 필요한 항목도 확인한다.
+- 스킬 개발 대화의 각 응답을 마치기 전에 [명세서 기록 트리거](references/lifecycle.md#명세서-기록-트리거)를 확인하고 해당하는 생성 또는 갱신을 수행한다. 사용자의 별도 저장 요청을 기다리지 않는다.
+- 초안이나 구현 파일을 작성 또는 수정하기 전에도 같은 기록 트리거를 확인한다.
 - 명세서를 기록할 때는 [명세서 형식](references/specification.md)을 따른다.
 - 선택한 단계 문서의 조건과 근거를 확인하고 사용자 요청 범위에서 작업, 기록 및 전이를 진행한다.
 - 단계별 상세 문서는 현재 작업과 판단에 필요한 시점에 읽는다.
