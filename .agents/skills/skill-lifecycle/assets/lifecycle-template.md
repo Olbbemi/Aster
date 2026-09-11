@@ -10,6 +10,7 @@ current_stage: problem-definition
 <!-- 제목과 operation의 자리표시자는 실제 작업에 맞게 바꾼다. name과 target_path의 미정값은 references/specification.md의 프론트매터 기준에 따라 처리한다. -->
 <!-- current_stage는 references/lifecycle.md의 최초 기록의 단계 판단에 따라 정한다. 단계 이동 기록에는 최초 상태 산정과 실제 이후 전이를 구분한다. -->
 <!-- 작성 기준: skill-lifecycle 스킬 디렉토리의 references/specification.md, references/lifecycle.md 및 references/stages/<단계 식별자>.md. -->
+<!-- 현재 단계 밖의 선행 논의도 기록하며 내용의 기록 상태와 단계 진입/완료 판단을 구분한다. 배치와 저장 후 대조는 skill-lifecycle 스킬 디렉토리의 references/specification.md에 있는 "단계별 본문 기록 기준"과 "명세서 작성 시 확인할 사항"을 따른다. -->
 
 ## problem-definition (문제 정의)
 
