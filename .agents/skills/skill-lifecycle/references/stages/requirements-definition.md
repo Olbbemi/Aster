@@ -43,10 +43,9 @@
 ### 허용 전이
 
 - 모든 완료 조건과 그 근거가 확인되면 `existing-configuration-review` (기존 구성 확인)로 이동한다.
-- 이동할 때는 전이 사유와 근거를 기록한 뒤 명세서 프론트매터의 `current_stage`를 `existing-configuration-review`로 변경한다.
 - 요건이 `problem-definition` (문제 정의)에서 확인한 문제, 스킬의 수행 범위 또는 기대 결과와 맞지 않으면 `problem-definition`으로 돌아간다.
 - `problem-definition` (문제 정의)으로 돌아갈 사유가 없고 완료 조건을 충족하지 못하면 `requirements-definition` (요건 정의)에 머물며 부족한 내용을 확인하고 보완한다.
-- 이전 단계로 돌아갈 때는 전이 사유와 근거를 기록한 뒤 명세서 프론트매터의 `current_stage`를 돌아갈 단계의 식별자로 변경한다.
+- 전이 기록과 단계 갱신, 복귀 후 변경 영향 확인 및 필요한 재검증은 [생명 주기 운영 규칙의 단계 전이](../lifecycle.md#단계-전이)를 따른다.
 
 ### 산출물
 
