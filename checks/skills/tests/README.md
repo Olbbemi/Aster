@@ -9,7 +9,7 @@
 | 테스트 파일 | 검사 코드 | 대표 검증 범위 |
 | --- | --- | --- |
 | [test_structure.py](test_structure.py) | [check_structure.py](../scripts/check_structure.py) | 기본 구조와 프론트매터의 정상/오류 판정 |
-| [test_references.py](test_references.py) | [check_references.py](../scripts/check_references.py) | 링크 추출, 경로 해석과 검사 제외 처리 |
+| [test_references.py](test_references.py) | [check_references.py](../scripts/check_references.py) | 링크 추출/경로 해석, 제목과 명시 앵커, 절 대조 및 오류/미판정 처리 |
 | [test_distribution.py](test_distribution.py) | [check_distribution.py](../scripts/check_distribution.py) | 배포 JSON, 등록 경로와 기대 파일 목록 대조 |
 
 공통으로 실제 CLI 호출의 출력과 종료 코드가 기대값과 일치하는지, 검사 대상이 변경되지 않는지 확인한다.

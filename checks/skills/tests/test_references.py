@@ -147,10 +147,122 @@ class ReferenceTests(unittest.TestCase):
         self.assertTrue(all(c["target"] is None for c in result["checks"]))
 
     def test_fragments_and_queries_do_not_become_filename_characters(self):
-        result = self.run_check('[file](SKILL.md#no-such-heading) [self](#no-such-heading) [query](SKILL.md?view=1#top)')
+        result = self.run_check('# Top\n\n[file](SKILL.md#missing) [self](#top) [query](SKILL.md?view=1#top)')
         self.assertEqual(result["counts"]["PASS"], 2)
-        self.assertEqual(result["counts"]["SKIP"], 1)
-        self.assertTrue(all(not c["fragment_checked"] for c in result["checks"]))
+        self.assertEqual(result["counts"]["FAIL"], 1)
+        self.assertTrue(all(c["fragment_checked"] for c in result["checks"]))
+
+    def test_same_other_and_reference_style_section_links(self):
+        self.write('## 설치 방법\n', 'refs/guide.MD')
+        result = self.run_check(
+            '## 시작\n\n[self](#시작) [other](refs/guide.MD#설치-방법) [ref][section]\n\n'
+            '[section]: refs/guide.MD#%EC%84%A4%EC%B9%98-%EB%B0%A9%EB%B2%95\n')
+        self.assertEqual(result['counts']['PASS'], 3, result)
+        self.assertTrue(all(c['fragment_checked'] for c in result['checks']))
+        self.assertEqual(result['checks'][1]['matched_anchor'], '설치-방법')
+
+    def test_heading_text_formats_setext_and_unicode(self):
+        result = self.run_check(
+            '## **설치** `Code_Name` &amp; [사용](SKILL.md) ![그림](SKILL.md) <em>안내</em>!\n\n'
+            '두 줄\n제목\n----\n\n'
+            '## A  B\n\n'
+            '[formatted](#설치-code_name--사용-그림-안내) [setext](#두-줄-제목) [spaces](#a--b)\n')
+        self.assertEqual(result['exit_code'], 0, result)
+        self.assertEqual(sum(c['fragment_checked'] for c in result['checks']), 3)
+
+    def test_duplicate_headings_avoid_all_prior_automatic_anchors(self):
+        result = self.run_check(
+            '# A\n\n# A-1\n\n# A\n\n# A!\n\n'
+            '[first](#a) [literal](#a-1) [second](#a-2) [collision](#a-3) [bad](#a-4)')
+        self.assertEqual(result['counts']['PASS'], 4, result)
+        self.assertEqual(result['counts']['FAIL'], 1)
+
+    def test_explicit_html_anchors_do_not_change_heading_numbering(self):
+        result = self.run_check(
+            '<a name="a-1"></a>\n\n<div id="Custom&amp;ID"></div>\n\n'
+            '<span id="inline"/>\n\n# A\n\n# A\n\n'
+            '[auto](#a-1) [case](#Custom%26ID) [inline](#inline) [wrong](#custom%26id)')
+        self.assertEqual(result['counts']['PASS'], 3, result)
+        self.assertEqual(result['counts']['FAIL'], 1)
+
+    def test_examples_comments_and_frontmatter_do_not_create_anchors(self):
+        result = self.run_check(
+            '---\ndescription: "<a id=metadata></a>"\n---\n'
+            '```markdown\n# Fenced\n<a id="code"></a>\n```\n\n'
+            '    # Indented\n\n<!-- <a id="comment"></a> -->\n\n'
+            '`<a id="inline"></a>`\n\n'
+            '[a](#fenced) [b](#code) [c](#indented) [d](#comment) [e](#inline) [f](#metadata)')
+        self.assertEqual(result['counts']['FAIL'], 6, result)
+
+    def test_fragments_are_decoded_once_without_case_or_unicode_normalization(self):
+        result = self.run_check(
+            '<a id="percent%20"></a>\n\n# Café\n\n# Cafe\u0301\n\n'
+            '[percent](#percent%2520) [composed](#caf%C3%A9) [decomposed](#cafe%CC%81) [case](#Café)')
+        self.assertEqual(result['counts']['PASS'], 3, result)
+        self.assertEqual(result['counts']['FAIL'], 1)
+
+    def test_invalid_fragment_encoding_and_nul_are_failures(self):
+        result = self.run_check('[encoding](#%FF) [nul](#%00)')
+        self.assertEqual(result['counts']['FAIL'], 2, result)
+        self.assertTrue(all(c['id']=='reference.fragment.encoding' for c in result['checks']))
+        self.assertTrue(all(not c['fragment_checked'] for c in result['checks']))
+
+    def test_non_markdown_and_directory_fragments_are_unchecked(self):
+        self.write('plain', 'file.txt')
+        result = self.run_check('[text](file.txt#section) [dir](.#section)')
+        self.assertEqual(result['exit_code'], 2, result)
+        self.assertEqual(result['counts']['UNCHECKED'], 2)
+
+    def test_empty_fragments_and_external_fragments(self):
+        result = self.run_check('[self](#) [file](SKILL.md#) [web](https://example.invalid/#missing)')
+        self.assertEqual(result['counts']['PASS'], 2, result)
+        self.assertEqual(result['counts']['SKIP'], 1)
+        self.assertTrue(all(not c['fragment_checked'] for c in result['checks']))
+
+    def test_section_target_is_read_once_without_scanning_its_links(self):
+        external = self.root / 'outside.md'
+        external.write_text('# Guide\n\n[bad](missing.md)')
+        self.write('[one](../outside.md#guide) [two](../outside.md#guide)')
+        original, reads = Path.read_text, []
+        def read(path, *args, **kwargs):
+            reads.append(path.resolve())
+            return original(path, *args, **kwargs)
+        with patch.object(Path, 'read_text', read):
+            result = check_references(self.skill)
+        self.assertEqual(result['counts']['PASS'], 2, result)
+        self.assertEqual(len(result['documents']), 1)
+        self.assertEqual(reads.count(external.resolve()), 1)
+
+    def test_unreadable_or_unparseable_section_target_is_error(self):
+        external = self.root / 'outside.md'
+        external.write_text('# Guide')
+        self.write('[other](../outside.md#guide)')
+        original = Path.read_text
+        def read(path, *args, **kwargs):
+            if path.resolve() == external.resolve():
+                raise PermissionError('denied')
+            return original(path, *args, **kwargs)
+        with patch.object(Path, 'read_text', read):
+            result = check_references(self.skill)
+        self.assert_check(result, 'reference.fragment.read', 'ERROR')
+        external.write_text('---\nunterminated frontmatter')
+        self.assert_check(check_references(self.skill), 'reference.fragment.read', 'ERROR')
+
+    def test_fragment_through_symlink_preserves_source_relative_paths(self):
+        external = self.root / 'external.md'
+        external.write_text('# Guide\n\n[local](asset.md#asset) [self](#guide)')
+        self.source.symlink_to(external)
+        self.write('# Asset', 'asset.md')
+        self.assertEqual(check_references(self.skill)['exit_code'], 0)
+
+    def test_cli_missing_section_is_failure_with_location_and_policy(self):
+        self.write('# Present\n\n[missing](#absent)')
+        run = self.cli(self.skill, '--json')
+        result = json.loads(run.stdout)
+        self.assertEqual(run.returncode, 1, run.stderr)
+        self.assertEqual(result['checks'][0]['block_line'], 3)
+        self.assertEqual(result['anchor_policy'], 'aster-markdown-headings-v1')
+        self.assertTrue(result['checks'][0]['fragment_checked'])
 
     def test_missing_file_with_fragment_still_fails(self):
         result = self.run_check('[bad](absent.md#heading)')
