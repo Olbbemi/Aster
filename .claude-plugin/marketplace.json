@@ -1,7 +1,12 @@
 {
   "name": "aster",
   "owner": {
-    "name": "Local developer"
+    "name": "Olbbemi"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "camellia",
+      "source": "./plugins/Camellia"
+    }
+  ]
 }
