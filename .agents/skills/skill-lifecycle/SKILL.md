@@ -17,6 +17,7 @@ description: |
 ## 핵심 진행 흐름
 
 - `SKILL.md`의 상대 참조는 `SKILL.md`가 있는 스킬 디렉토리를 기준으로 해석한다.
+- [Aster 작업 규칙의 공유 작업 데이터 접근](../../../AGENTS.md#공유-작업-데이터-접근)에 따라 관련 규격과 작업 자료를 확인한다.
 - 사용자 요청과 관련 명세서의 존재 여부 및 내용을 확인하여, 새 작업을 시작하는지 기존 작업을 재개하는지 구분한다.
 - [생명 주기 운영 규칙](references/lifecycle.md)을 읽는다. 새 작업이면 그 문서의 최초 기록 기준과 [명세서 형식](references/specification.md), [템플릿](assets/lifecycle-template.md)에 따라 명세서를 생성한다. 기존 작업이면 해당 작업의 명세서를 사용한다.
 - 명세서의 `current_stage`에 해당하는 `references/stages/<단계 식별자>.md`를 읽는다. 다른 단계에 관련된 내용을 기록하거나 판단할 때는 그 단계의 필요한 항목도 확인한다.
