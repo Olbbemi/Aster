@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-"""Check local Markdown link targets in all Markdown files of a skill directory."""
+"""Check local link targets and Markdown fragments in a skill directory."""
 
 import argparse
 from collections import Counter
 import json
+from html.parser import HTMLParser
 import os
 from pathlib import Path
+import re
 import stat
 import sys
+import unicodedata
 from urllib.parse import unquote, urlsplit
 
 REFERENCE = "standards/skills/skill-validation.md#구조-검증"
 PATH_BASE = "standards/skills/skill-content.md#단계적-공개"
+ANCHORS = "standards/skills/skill-validation.md#로컬-markdown-절-링크의-기계-판정"
+ANCHOR_POLICY = "aster-markdown-headings-v1"
 
 
 def markdown_body(text):
@@ -25,10 +30,10 @@ def markdown_body(text):
     return text
 
 
-def extract_links(parser, text):
+def extract_links(tokens):
     """Yield destinations and containing-block positions, never invented exact lines."""
     enclosing_line = None
-    for block in parser.parse(markdown_body(text)):
+    for block in tokens:
         if block.map:
             enclosing_line = block.map[0] + 1
         if block.type != "inline":
@@ -43,8 +48,81 @@ def extract_links(parser, text):
                 yield token.attrGet("src"), "image", line
 
 
-def check_destination(source, destination):
-    """Return existence facts. Do not fetch URLs, expand shell variables or test headings."""
+def inline_text(tokens):
+    """Use rendered textual content, not Markdown formatting or HTML tags."""
+    return "".join(
+        inline_text(token.children or []) if token.type == "image" else
+        token.content if token.type in ("text", "code_inline") else
+        " " if token.type in ("softbreak", "hardbreak") else ""
+        for token in tokens
+    )
+
+
+class ExplicitAnchors(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.anchors = set()
+
+    def handle_starttag(self, tag, attrs):
+        for name, value in attrs:
+            if value and (name == "id" or (tag == "a" and name == "name")):
+                self.anchors.add(value)
+
+
+def collect_anchors(tokens):
+    """Apply the documented policy in document order; custom IDs do not number headings."""
+    automatic, html = set(), ExplicitAnchors()
+    for index, token in enumerate(tokens):
+        if token.type == "heading_open":
+            title = inline_text(tokens[index + 1].children or []).strip().lower()
+            base = "".join(
+                "-" if char == " " else char for char in title
+                if char in " -_" or unicodedata.category(char)[0] in "LMN"
+            )
+            anchor, suffix = base, 0
+            while anchor in automatic:
+                suffix += 1
+                anchor = f"{base}-{suffix}"
+            automatic.add(anchor)
+        for part in [token, *(token.children or [])]:
+            if part.type in ("html_block", "html_inline"):
+                html.feed(part.content)
+    html.close()
+    return automatic | html.anchors
+
+
+def check_fragment(item, target, load_document):
+    item.update(basis=ANCHORS, anchor_policy=ANCHOR_POLICY)
+    try:
+        encoded = item["fragment"]
+        if re.search(r"%(?![0-9a-fA-F]{2})", encoded):
+            raise ValueError("fragment의 percent escape가 올바르지 않습니다.")
+        fragment = unquote(encoded, encoding="utf-8", errors="strict")
+        if "\0" in fragment:
+            raise ValueError("fragment에 NUL을 사용할 수 없습니다.")
+        item["fragment_decoded"] = fragment
+    except (ValueError, UnicodeError) as exc:
+        item.update(status="FAIL", id="reference.fragment.encoding", message=str(exc))
+        return item
+    if item["target_kind"] != "file" or target.suffix.lower() != ".md":
+        item.update(status="UNCHECKED", id="reference.fragment.unsupported",
+                    message="Markdown 파일 이외 대상의 fragment는 판정하지 않습니다.")
+        return item
+    try:
+        anchors = load_document(target)[1]
+    except (OSError, UnicodeError, ValueError, RuntimeError, RecursionError) as exc:
+        item.update(status="ERROR", id="reference.fragment.read",
+                    message=f"절 확인용 문서를 읽거나 파싱할 수 없습니다: {exc}")
+        return item
+    found = fragment in anchors
+    item.update(status="PASS" if found else "FAIL", id="reference.fragment",
+                fragment_checked=True, matched_anchor=fragment if found else None,
+                message="대상 문서의 앵커가 존재합니다." if found else "대상 문서에 지정한 앵커가 없습니다.")
+    return item
+
+
+def check_destination(source, destination, load_document):
+    """Check filesystem existence before interpreting a local Markdown fragment."""
     item = dict(destination=destination, target=None, resolved_target=None,
                 fragment=None, fragment_checked=False, basis=REFERENCE)
     try:
@@ -54,10 +132,6 @@ def check_destination(source, destination):
             item.update(status="SKIP", id="reference.scheme",
                         message="외부 URL/별도 URI 스킴은 로컬 파일 검사 범위 밖입니다.")
             return item
-        if not parts.path and parts.fragment:
-            item.update(status="SKIP", id="reference.fragment",
-                        message="문서 내부 절의 유효성은 검사하지 않았습니다.")
-            return item
         decoded = unquote(parts.path, encoding="utf-8", errors="strict")
         target = source if not decoded else source.parent / decoded
         item["target"] = str(target)
@@ -66,7 +140,9 @@ def check_destination(source, destination):
         if stat.S_ISREG(mode) or stat.S_ISDIR(mode):
             item.update(status="PASS", id="reference.exists",
                         target_kind="directory" if stat.S_ISDIR(mode) else "file",
-                        message="로컬 대상이 존재합니다. 절/쿼리의 의미는 검사하지 않았습니다.")
+                        message="로컬 대상이 존재합니다. 쿼리의 동적 의미는 검사하지 않습니다.")
+            if parts.fragment:
+                return check_fragment(item, target, load_document)
         else:
             item.update(status="FAIL", id="reference.kind",
                         message="대상이 일반 파일이나 디렉토리가 아닙니다.")
@@ -97,7 +173,8 @@ def check_references(directory):
             status, code = "FAIL", 1
         else:
             status, code = "PASS", 0
-        return dict(root=str(root), scope="markdown-local-target-existence",
+        return dict(root=str(root), scope="markdown-local-targets-and-fragments",
+                    anchor_policy=ANCHOR_POLICY,
                     status=status, exit_code=code, documents=documents,
                     counts={key: counts[key] for key in ("PASS", "FAIL", "SKIP", "UNCHECKED", "ERROR")},
                     links_extracted=sum("destination" in item for item in checks),
@@ -119,6 +196,15 @@ def check_references(directory):
     # This checker never renders or executes links. Recognize all schemes so
     # that even file:/custom: destinations appear explicitly as excluded.
     parser.validateLink = lambda destination: True
+    cache = {}
+
+    def load_document(source):
+        # Cache content by real file; relative links still use their source location.
+        key = source.resolve(strict=True)
+        if key not in cache:
+            tokens = parser.parse(markdown_body(source.read_text(encoding="utf-8-sig")))
+            cache[key] = (tokens, collect_anchors(tokens))
+        return cache[key]
 
     def walk_error(exc):
         problem("scan.read", "ERROR", f"디렉토리를 읽을 수 없습니다: {exc}", exc.filename)
@@ -149,14 +235,13 @@ def check_references(directory):
             if not source.is_file():
                 problem("document.file", "ERROR", "Markdown 대상이 읽을 수 있는 일반 파일이 아닙니다.", source)
                 continue
-            text = source.read_text(encoding="utf-8-sig")
-            links = list(extract_links(parser, text))
-        except (OSError, UnicodeError, ValueError, RecursionError) as exc:
+            links = list(extract_links(load_document(source)[0]))
+        except (OSError, UnicodeError, ValueError, RuntimeError, RecursionError) as exc:
             problem("document.read", "ERROR", f"Markdown을 읽거나 파싱할 수 없습니다: {exc}", source)
             continue
         document.update(parsed=True, links=len(links))
         for destination, kind, line in links:
-            item = check_destination(source, destination)
+            item = check_destination(source, destination, load_document)
             item.update(source=str(source), block_line=line, kind=kind, path_basis=PATH_BASE)
             checks.append(item)
     return report()
@@ -179,7 +264,7 @@ def main(argv=None):
             if "destination" in item:
                 print(f"    {item['destination']} -> {item['target'] or '(로컬 검사 제외)'}")
             print(f"    {item['message']}")
-        print("범위: Markdown 로컬 링크 대상의 존재. 외부 URL/#절/일반 텍스트 경로의 유효성은 검사하지 않았습니다.")
+        print(f"범위: 로컬 링크 대상과 Markdown 절({ANCHOR_POLICY}). 외부 URL/일반 텍스트 경로는 미검사입니다.")
     return result["exit_code"]
 
 
