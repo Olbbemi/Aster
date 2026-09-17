@@ -1,0 +1,6 @@
+{
+  "name": "camellia",
+  "version": "0.1.0",
+  "description": "논의, 설계, 구현, 검증과 QA를 연결하는 코드 개발 작업을 지원한다.",
+  "skills": "./skills/"
+}

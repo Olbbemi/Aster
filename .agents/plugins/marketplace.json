@@ -3,5 +3,18 @@
   "interface": {
     "displayName": "Aster"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "camellia",
+      "source": {
+        "source": "local",
+        "path": "./plugins/Camellia"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
 }
