@@ -1,0 +1,29 @@
+name: Propagate main to integration branches
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-main-to-integrate
+  cancel-in-progress: false
+
+jobs:
+  propagate:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out merged main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Test propagation with disposable local remotes
+        run: python3 -I -B -m unittest discover -s tools/tests -p test_sync_integrate_branches.py -v
+      - name: Propagate and verify remote integration branches
+        run: python3 -I -B tools/sync_integrate_branches.py
