@@ -1,0 +1,17 @@
+# Aster scenario transport only. Child Codex keeps its own workspace sandbox.
+prefix_rule(
+    pattern = ["/usr/bin/python3", "-I", "/home/olbbemi/Project/Aster/tools/scenario_runner.py", "run"],
+    decision = "allow",
+    justification = "Run the bounded Aster scenario transport; child Codex stays in workspace-write",
+    match = [
+        "/usr/bin/python3 -I /home/olbbemi/Project/Aster/tools/scenario_runner.py run --case /example --step 01-entry",
+        "/usr/bin/python3 -I /home/olbbemi/Project/Aster/tools/scenario_runner.py run --case /example --step 02-followup",
+    ],
+    not_match = [
+        "python3 /tmp/Camellia/scenario-3-3.py run 01-entry",
+        "/usr/bin/python3 -c 'print(1)'",
+        "/usr/bin/python3 -I /tmp/other.py run",
+        "/usr/bin/python3 /home/olbbemi/Project/Aster/tools/scenario_runner.py run",
+        "/usr/bin/python3 -I /home/olbbemi/Project/Aster/tools/scenario_runner.py prepare",
+    ],
+)
