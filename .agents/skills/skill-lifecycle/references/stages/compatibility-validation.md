@@ -1,6 +1,6 @@
 # compatibility-validation (호환성 검증)
 
-이 문서는 `skill-lifecycle` 생명 주기의 `compatibility-validation` (호환성 검증) 단계에 적용할　운영 규칙과 단일 명세서 기록 기준을 정의한다.
+이 문서는 `skill-lifecycle` 생명 주기의 `compatibility-validation` (호환성 검증) 단계에 적용할 운영 규칙과 단일 명세서 기록 기준을 정의한다.
 
 ## 단계 운영 규칙
 
