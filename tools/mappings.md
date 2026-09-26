@@ -8,6 +8,6 @@
 
 | 용도 | 스크립트 | 개별 가이드 |
 | --- | --- | --- |
-| 기본 구조와 형식 | [check_structure.py](scripts/check_structure.py) | [check-structure.md](references/check-structure.md) |
-| 참조 연결 | [check_references.py](scripts/check_references.py) | [check-references.md](references/check-references.md) |
-| 배포 구성 | [check_distribution.py](scripts/check_distribution.py) | [check-distribution.md](references/check-distribution.md) |
+| 기본 구조와 형식 | [check_structure.py](scripts/validation/check_structure.py) | [check-structure.md](references/check-structure.md) |
+| 참조 연결 | [check_references.py](scripts/validation/check_references.py) | [check-references.md](references/check-references.md) |
+| 배포 구성 | [check_distribution.py](scripts/validation/check_distribution.py) | [check-distribution.md](references/check-distribution.md) |

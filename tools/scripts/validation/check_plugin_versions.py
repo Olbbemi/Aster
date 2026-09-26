@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only plugin version checks. Policy: standards/git-workflow.md."""
+"""Read-only plugin version checks. Policy: .github/git-workflow.md."""
 
 import argparse
 import json

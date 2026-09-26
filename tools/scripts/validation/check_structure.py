@@ -86,7 +86,7 @@ def check_structure(directory):
     try:
         import yaml
     except ImportError:
-        add("dependency.yaml", "ERROR", "PyYAML이 필요합니다. checks/skills/requirements.txt를 확인하십시오.", VALIDATION)
+        add("dependency.yaml", "ERROR", "PyYAML이 필요합니다. tools/requirements.txt를 확인하십시오.", VALIDATION)
         return report()
     try:
         data = load_frontmatter("\n".join(lines[1:end]), yaml)

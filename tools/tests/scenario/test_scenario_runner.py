@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 
 
-SPEC = importlib.util.spec_from_file_location('scenario_runner', Path(__file__).parents[1] / 'scenario_runner.py')
+SPEC = importlib.util.spec_from_file_location('scenario_runner', Path(__file__).parents[2] / 'scripts/scenario/scenario_runner.py')
 runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 THREAD = '12345678-1234-1234-1234-123456789abc'
