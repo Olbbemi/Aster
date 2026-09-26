@@ -1,7 +1,7 @@
 # check_structure.py
 
 [공통 가이드라인](../guidelines.md)에 따라 기본 구조 검사 스크립트를 실행할 때 읽는 개별 안내다.
-[검사 코드](../scripts/check_structure.py)는 지정한 스킬의 SKILL.md와 프론트매터만 검사한다.
+[검사 코드](../scripts/validation/check_structure.py)는 지정한 스킬의 SKILL.md와 프론트매터만 검사한다.
 
 ## 적용 대상
 
@@ -16,7 +16,7 @@ PyYAML이 필요하며 준비 방법과 허용 버전은 [공통 가이드라인
 Markdown 파서는 필요하지 않다.
 
 ```bash
-python3 checks/skills/scripts/check_structure.py "$skill_directory" --json
+python3 tools/scripts/validation/check_structure.py "$skill_directory" --json
 ```
 
 ## 검사 범위

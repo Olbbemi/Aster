@@ -1,4 +1,4 @@
-<!-- 작성 규칙: standards/git-workflow.md의 "PR 작성" 절. 제출 전 안내 주석을 제거합니다. -->
+<!-- 작성 규칙: .github/git-workflow.md의 "PR 작성" 절. 제출 전 안내 주석을 제거합니다. -->
 
 ## 변경 목적과 결과
 
@@ -31,5 +31,5 @@
 - 상향 수준 또는 상향 제외 사유:
 - 버전 판단 근거:
 
-판단 기준은 standards/git-workflow.md의 "플러그인 버전 확인" 절을 따릅니다.
+판단 기준은 .github/git-workflow.md의 "플러그인 버전 확인" 절을 따릅니다.
 -->

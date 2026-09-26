@@ -1,7 +1,7 @@
 # check_references.py
 
 [공통 가이드라인](../guidelines.md)에 따라 참조 연결 검사 스크립트를 실행할 때 읽는 개별 안내다.
-[검사 코드](../scripts/check_references.py)는 로컬 링크 대상과 Markdown 문서의 절 존재 여부를 검사한다.
+[검사 코드](../scripts/validation/check_references.py)는 로컬 링크 대상과 Markdown 문서의 절 존재 여부를 검사한다.
 
 ## 적용 대상
 
@@ -15,7 +15,7 @@
 markdown-it-py가 필요하며 준비 방법과 허용 버전은 [공통 가이드라인](../guidelines.md)을 따른다.
 
 ```bash
-python3 checks/skills/scripts/check_references.py "$skill_directory" --json
+python3 tools/scripts/validation/check_references.py "$skill_directory" --json
 ```
 
 ## 추출 범위와 경로 해석
@@ -52,7 +52,7 @@ JSON에는 스캔한 모든 문서와 추출 링크 수, 항목별 판정/근거
 ## 절 링크 판정
 
 제목과 명시 HTML 앵커의 수집, 문자 변환과 중복 번호, fragment 해석은
-[검증 규격의 절 링크 판정](../../../standards/skills/skill-validation.md#로컬-markdown-절-링크의-기계-판정)을 따른다.
+[검증 규격의 절 링크 판정](../../standards/skills/skill-validation.md#로컬-markdown-절-링크의-기계-판정)을 따른다.
 정책 이름은 `aster-markdown-headings-v1`이며 결과의 `anchor_policy`에 기록한다.
 파일 확인, 제목/앵커 수집과 절 대조는 같은 스크립트의 별도 함수에서 처리한다.
 
@@ -66,7 +66,7 @@ JSON에는 스캔한 모든 문서와 추출 링크 수, 항목별 판정/근거
 ## 결과 해석과 한계
 
 생성 예정 경로에 대해 로컬 대상이 없다는 `FAIL`이 나오면, 호출 스킬은 문서에 정의된
-생성 시점과 조건을 [검증 규격](../../../standards/skills/skill-validation.md#구조-검증)에 대조하여
+생성 시점과 조건을 [검증 규격](../../standards/skills/skill-validation.md#구조-검증)에 대조하여
 현재 존재해야 할 대상인지 판단한다. 아직 생성할 시점이 아닌 경로의 부재만으로 규격 위반을
 확정하지 않으며, 생성 예정이라는 추정만으로 실패를 제외하지도 않는다.
 

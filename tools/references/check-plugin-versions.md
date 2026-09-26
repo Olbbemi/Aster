@@ -1,6 +1,6 @@
 # 플러그인 버전 검사기
 
-검사 단위와 판정 기준의 정본은 [Git 운영 규칙](../../standards/git-workflow.md#플러그인-버전-확인)이다.
+검사 단위와 판정 기준의 정본은 [Git 운영 규칙](../../.github/git-workflow.md#플러그인-버전-확인)이다.
 
 [검사기](../scripts/validation/check_plugin_versions.py)는 Git의 커밋 또는 스테이징 상태를 읽고,
 [pre-push 진입점](../scripts/git/pre-push)은 실제 전송할 ref 정보를 검사기에 전달한다.
@@ -15,8 +15,8 @@
 새 브랜치의 사전 검사는 분기한 통합 브랜치 등을 기준으로 하며 최종 원격 비교는 훅이 수행한다.
 
 상향 수준과 판단 시점은 Git 운영 규칙의
-[상향 수준과 호환성 판단](../../standards/git-workflow.md#상향-수준과-호환성-판단)과
-[사전 검사와 pre-push](../../standards/git-workflow.md#사전-검사와-pre-push)를 따른다.
+[상향 수준과 호환성 판단](../../.github/git-workflow.md#상향-수준과-호환성-판단)과
+[사전 검사와 pre-push](../../.github/git-workflow.md#사전-검사와-pre-push)를 따른다.
 검사기는 버전 형식, 증가 여부와 예외 조건을 검사하며,
 변경 의미에 맞는 major/minor/patch 선택은 자동 판정하지 않는다.
 

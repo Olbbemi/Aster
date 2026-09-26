@@ -1,8 +1,11 @@
 # 검사 스크립트 사용 가이드라인
 
-Aster의 스킬이 검사 스크립트를 사용할 때 에이전트가 따르는 공통 지침이다.
+Aster 내부 스킬이 매핑에 연결된 검사 스크립트를 사용할 때 에이전트가 따르는 공통 지침이다.
 호출 스킬의 지침에서 이 문서로 접근한다. 에이전트가 매핑과 개별 안내를 읽어 실행하며,
 별도 자동 실행기나 매핑 해석기는 사용하지 않는다.
+
+이 지침은 매핑된 스킬 검사기에 적용한다. 같은 `tools/`에 있는 버전 검사기, Git 자동화와
+시나리오 실행기의 사용 계약은 각 [개별 안내](references/)를 따른다.
 
 검사 스크립트는 대상을 읽기만 하며 대상 스킬을 실행하지 않는다.
 이 디렉토리의 문서와 코드는 개발용 자료이며 플러그인 배포물에는 포함하지 않는다.
@@ -34,7 +37,7 @@ Python 3.10 이상을 사용한다. 각 안내의 명령은 Aster 저장소 루�
 필요한 라이브러리가 없으면 프로젝트의 Python 환경에 다음 명령으로 준비한다.
 
 ```bash
-python3 -m pip install -r checks/skills/requirements.txt
+python3 -m pip install -r tools/requirements.txt
 ```
 
 ## 결과 해석과 제공
@@ -61,11 +64,41 @@ python3 -m pip install -r checks/skills/requirements.txt
 
 ## 관리 기준
 
-규칙의 정본은 [스킬 내용 작성 규격](../../standards/skills/skill-content.md)과
-[스킬 검증 규격](../../standards/skills/skill-validation.md)이다. 매핑과 검사 코드는 이를 구현한다.
+규칙의 정본은 [스킬 내용 작성 규격](../standards/skills/skill-content.md)과
+[스킬 검증 규격](../standards/skills/skill-validation.md)이다. 매핑과 검사 코드는 이를 구현한다.
 
 ## 검사 스크립트의 개발과 자체 검증
 
-[tests/README.md](tests/README.md)는 검사 스크립트를 새로 만들거나 수정할 때,
-또는 실행 환경 변경의 영향을 확인할 때 사용하는 개발 및 자체 검증 안내다.
-스킬이 기존 검사 스크립트를 사용하는 일반 실행 절차에서는 이 문서를 읽거나 자체 테스트를 실행하지 않는다.
+이 절은 검사 스크립트를 새로 만들거나 수정할 때, 또는 실행 환경 변경의 영향을 확인할 때 사용한다.
+스킬이 기존 검사 스크립트를 사용하는 일반 실행 절차에는 이 절 읽기와 자체 테스트를 포함하지 않는다.
+`tests/`는 `scripts/`의 검사 코드가 규격에 맞는 대상을 검사하고 올바르게 판정하는지 확인한다.
+
+### 테스트 파일별 목적과 범위
+
+| 테스트 파일 | 검사 코드 | 대표 검증 범위 |
+| --- | --- | --- |
+| [test_structure.py](tests/validation/test_structure.py) | [check_structure.py](scripts/validation/check_structure.py) | 기본 구조와 프론트매터의 정상/오류 판정 |
+| [test_references.py](tests/validation/test_references.py) | [check_references.py](scripts/validation/check_references.py) | 링크 추출/경로 해석, 제목과 명시 앵커, 절 대조 및 오류/미판정 처리 |
+| [test_distribution.py](tests/validation/test_distribution.py) | [check_distribution.py](scripts/validation/check_distribution.py) | 배포 JSON, 등록 경로와 기대 파일 목록 대조 |
+
+공통으로 실제 CLI 호출의 출력과 종료 코드가 기대값과 일치하는지, 검사 대상이 변경되지 않는지 확인한다.
+개별 사례와 기대값은 각 테스트 코드에서 관리한다.
+
+### 실행
+
+Python과 의존성 준비는 위 [공통 실행 조건](#공통-실행-조건)을 따른다. 전체 시험에는
+[requirements.txt](requirements.txt)의 라이브러리가 필요하다. unittest는 Python 표준 라이브러리다.
+
+Aster 저장소 루트에서 전체 시험을 실행한다.
+
+```bash
+for test_file in test_structure.py test_references.py test_distribution.py; do
+  python3 -B -m unittest discover -s tools/tests/validation -p "$test_file" -v || exit
+done
+```
+
+영향 범위가 특정 검사기에 한정되면 `-p`에 해당 테스트 파일명을 지정할 수 있다.
+테스트는 임시 파일/디렉토리의 정상/오류 사례, 검사기 import와 실제 CLI 호출을 확인한다.
+
+시험 통과는 검사기의 동작을 확인한 결과다. 실제 스킬의 검사 통과를 대신하지 않는다.
+명령, 적용 범위와 결과는 해당 개발 작업 기록에 남기고 원시 결과는 공유 작업 데이터에 보관한다.
