@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Propagate origin/main to every origin/integrate/* without checking them out.
 
-Contract: standards/git-workflow.md, tools/main-propagation.md.
+Contract: .github/git-workflow.md, tools/references/main-propagation.md.
 This command pushes real changes to origin. Tests use disposable local remotes.
 """
 

@@ -17,7 +17,7 @@ import tomllib
 from datetime import datetime, timezone
 
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[3]
 CODEX = Path('/home/olbbemi/.npm-global/bin/codex')
 EXCLUDED = {'.git', '.agents', '.codex', '__pycache__'}
 STEP = re.compile(r'[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}')

@@ -1,7 +1,7 @@
 # check_distribution.py
 
 [공통 가이드라인](../guidelines.md)에 따라 배포 구성 검사 스크립트를 실행할 때 읽는 개별 안내다.
-[검사 코드](../scripts/check_distribution.py)는 Aster의 두 marketplace를 사용하는 로컬 플러그인 구성을 검사한다.
+[검사 코드](../scripts/validation/check_distribution.py)는 Aster의 두 marketplace를 사용하는 로컬 플러그인 구성을 검사한다.
 두 marketplace 중 하나만 사용하는 구성, 원격 배포나 다른 manifest 형식을 모두 검증하는 도구는 아니다.
 검증이 필요하지만 이 범위에 맞지 않는 구성은 공통 가이드라인에 따라 미확인 사항으로 알린다.
 
@@ -21,7 +21,7 @@ Python 표준 라이브러리만 사용한다. 플러그인 경로, 두 marketpl
 [공통 가이드라인](../guidelines.md)을 따른다. 플러그인은 지정 저장소 경계 안에 있어야 한다.
 
 ```bash
-python3 checks/skills/scripts/check_distribution.py "$plugin_directory" \
+python3 tools/scripts/validation/check_distribution.py "$plugin_directory" \
   --repository-root "$repository_root" \
   --expected-files "$expected_files" --json
 ```
@@ -61,7 +61,7 @@ Codex 대상 항목의 `policy.installation`, `policy.authentication`, `category
 2026-09-13 확인한 [Codex 배포 문서](https://developers.openai.com/plugins/build/plugins),
 [Claude manifest 문서](https://code.claude.com/docs/en/plugins-reference)와
 [Claude marketplace 문서](https://code.claude.com/docs/en/plugin-marketplaces)의 해당 형식 및
-Aster의 [배포 경계](../../../standards/repository-layout.md)를 적용한다. 제품 전체 스키마,
+Aster의 [배포 경계](../../standards/repository-layout.md)를 적용한다. 제품 전체 스키마,
 설치된 배포물의 구성, 실제 Codex/Claude의 manifest 수용 여부는 검사 범위 밖이다.
 승인된 manifest 형식을 다른 배포 형식으로 자동 전환하지 않는다.
 
