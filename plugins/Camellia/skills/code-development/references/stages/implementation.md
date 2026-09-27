@@ -15,10 +15,9 @@
 
 ## 입력과 시작 시 확인
 
-- 필요한 선행 report가 없으면 이 단계 작업을 시작하거나 계속하지 않고 [중간 단계 시작의 기록 연결](../guidelines.md#중간-단계-시작의-기록-연결)에 따라 사용자와 회귀 또는 신규 플로우 진행을 결정한다.
-- 기존 implementation report가 있으면 같은 회차에서 가장 큰 번호를 확인한다. 파일 생성과 hold 재개는 공통 규칙을 따르며, 읽기만으로 상태를 바꾸지 않는다.
-- 기준으로 사용할 design report를 확인한다. 후보가 여러 개면 현재 참조와 상태를 제시하고 사용자 확인을 받는다.
-- 선택한 design report가 completed 상태인지 확인하고, 같은 디렉토리의 전체 파일명을 base_on에 기록한다.
+- 현재 implementation report와 선행 design report의 선택 및 base_on은
+  [참조 기준](../guidelines.md#프론트매터와-참조-확인)을 따른다.
+  [선행 report 확인](../guidelines.md#다음-단계-진입-시-선행-report-확인)을 마친 뒤 시작한다.
 - design report에 연결된 요구사항, 설계와 테스트 계획, 변경할 코드와 기존 테스트, 관련 의존성과 실행 환경 정보를 확인한다.
 - design report의 "구현용 모델과 추론 강도"를 확인한다. 권장 정보가 없거나 조정이 필요하면 [모델 선택 안내](../ai_agents/model-selection.md)를 참고한다. 사용자 지정과 현재 환경의 사용 가능 여부를 확인하고, 실제 사용한 조합 및 권장과 다른 경우의 이유를 implementation report에 기록한다. 세션 모델을 변경할 수 없으면 변경했다고 기록하지 않는다.
 
@@ -101,14 +100,17 @@ TDD와 화면 확인 범위는 설계의 [검증과 QA의 대상 구분](design.
 
 ## report 작성과 인계
 
-- [report 템플릿](../../assets/stage_reports/implementation-template.md)을 사용하여 선택된 회차 디렉토리에 `implementation-report-<번호>.md` 형식으로 작성한다. 번호는 `001`부터 시작하는 세 자리 순번이며, 기존 report의 재사용 또는 새 파일 생성 여부와 새 번호 부여는 guidelines의 공통 규칙을 따른다. status/base_on 처리도 같은 규칙을 따른다.
+- [report 템플릿](../../assets/stage_reports/implementation-template.md)으로 `implementation-report-<번호>.md`를 작성한다.
+  저장 위치와 생성/번호/상태 처리는 [공통 report 규칙](../guidelines.md#report-작성과-인계)을 따른다.
 - 템플릿의 단계 결과, 인계 사항, 완료 체크리스트와 사용자 승인 영역에 실제 결과를 기록한다. 템플릿 원본은 유지하고 실제 report의 제목과 자료 참조를 작업에 맞게 작성한다.
 - 변경 대상은 저장소 이름, 저장소 내 상대 디렉토리 또는 서브모듈 단위로 요약한다. 개별 파일 목록, 커밋 연결과 절대경로를 필수로 요구하지 않는다. 코드와 테스트, 실행 방법과 환경 및 데이터, 기대 결과와 판정 기준의 참조, 남은 사항을 검증 단계에 인계한다. 아직 시작하지 않은 verification report와 qa report는 미리 생성하지 않는다.
 
 ## 완료 확인과 이관
 
-guidelines의 [상호 확인과 체크리스트 갱신](../guidelines.md#상호-확인과-체크리스트-갱신)을 적용한다. 항목별 상호 확인 전에는 체크하지 않고, 확인 후 근거와 KST 기준 완료 시각을 기록한다.
+구현 결과와 상세 TDD 수행 근거, 적용하기로 한 통합/E2E의 작성 및 실행 준비 상태를 제출한다.
+통합 테스트와 E2E의 통과 여부는 구현 단계의 완료 조건으로 삼지 않는다.
 
-구현 결과와 상세 TDD 수행 근거를 제출하고, 적용하기로 한 통합 테스트와 E2E의 작성 및 실행 준비 상태를 함께 제시한다. 통합 테스트와 E2E의 통과 여부는 구현 단계의 완료 조건으로 삼지 않는다.
-
-implementation report의 체크 항목과 근거를 사용자와 검토하고, guidelines의 [완료 확인과 사용자 승인](../guidelines.md#완료-확인과-사용자-승인)에 따라 이관한다. 같은 implementation report의 변경은 [변경 후 체크리스트 재확인](../guidelines.md#변경-후-체크리스트-재확인) 규칙을 적용하며, hold 상태의 implementation report를 재개하는 경우에도 일반 승인 흐름을 거친다.
+템플릿의 체크 항목과 근거는 [상호 확인](../guidelines.md#상호-확인과-체크리스트-갱신)하고,
+[공통 승인 절차](../guidelines.md#완료-확인과-사용자-승인)에 따라 단계 종료와 인계를 처리한다.
+같은 report의 보완은 [체크리스트 재확인](../guidelines.md#변경-후-체크리스트-재확인),
+hold 상태의 재개는 [재개 절차](../guidelines.md#hold-상태인-후속-단계-재개)를 따른다.
