@@ -17,8 +17,8 @@
 5. `implementation` (구현)
 6. `mechanical-validation` (기계 검사)
 7. `behavioral-validation` (동작 검증)
-8. `compatibility-validation` (호환성 검증)
-9. `cross-validation` (교차 검증)
+8. `cross-validation` (교차 검증)
+9. `compatibility-validation` (호환성 검증)
 10. `completed` (완료)
 
 ## 단일 명세서
@@ -137,7 +137,7 @@
 
 ## 완료
 
-- `cross-validation` (교차 검증)의 완료 조건과 근거가 확인되면 `completed` (완료) 단계로 이동한다.
+- `compatibility-validation` (호환성 검증)의 완료 조건과 근거가 확인되면 `completed` (완료) 단계로 이동한다.
 - `current_stage`가 `completed`이면 [완료 단계](stages/completed.md)의 최종 확인 결과와 근거를 확인해 생명 주기의 완료 여부를 판단한다.
 - 사용 형태와 배치에 관한 판단은 [요건 정의](stages/requirements-definition.md)와 [구조 설계](stages/structure-design.md)를, 해당 사용 형태에 맞는 검증 환경과 결과의 확인은 [동작 검증](stages/behavioral-validation.md)과 [호환성 검증](stages/compatibility-validation.md)을 참조한다.
 - 실제 배포는 생명 주기의 필수 단계로 두지 않으며 사용자의 요청과 승인에 따라 별도로
