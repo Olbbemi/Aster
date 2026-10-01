@@ -2,7 +2,7 @@
 
 교차 검증을 수행하기로 한 경우 상대 CLI를 호출하고 결과를 확인할 때 읽는다.
 상대 경로는 이 파일이 있는 references/ai_agents/ 디렉토리를 기준으로 한다.
-수행 시점, 검토자 역할과 지적 처리는 [교차 검증 지침](../guidelines.md#교차-검증의-연결-위치), 모델의 선택은 [모델과 추론 강도 안내](model-selection.md)를 따른다.
+수행 시점, 검토자 역할과 지적 처리는 [교차 검증 지침](../guidelines.md#교차-검증의-연결-위치), 모델의 선택은 [모델 제안과 승인](model-selection.md)를 따른다.
 
 ## 실행 방식
 
@@ -52,7 +52,7 @@ codex exec '프롬프트' --model gpt-6-astra -c 'model_reasoning_effort="high"'
 | `--model gpt-6-astra` | 호출할 모델의 식별자를 지정한다. |
 | `-c 'model_reasoning_effort="high"'` | 해당 실행의 추론 강도 설정을 지정한다. |
 
-다른 권장 모델의 식별자는 `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`이다.
+다른 모델은 [모델 제안과 승인](model-selection.md)에서 선택한 실제 식별자로 지정한다.
 추론 강도는 `--effort`가 아니라 `-c`의 설정값으로 전달한다.
 
 ## 요청과 작업 경로
