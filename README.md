@@ -14,6 +14,7 @@
 | [.codex/](.codex) | 저장소에 적용하는 Codex 설정과 실행 허용 규칙 |
 | [.github/](.github) | Git 운영 규칙, PR과 GitHub 자동화 |
 | [plugins/](plugins) | 배포할 플러그인의 소스와 실행 자료 |
+| [shared/](shared/) | 내부 스킬과 설치된 플러그인이 함께 참조하는 공용 자료 |
 | [standards/](standards) | 구성 요소의 개발 규격과 저장소 배치 기준 |
 | [tools/](tools/) | 검사기, Git 자동화와 시나리오 실행기, 공용 테스트와 사용 안내 |
 
@@ -38,6 +39,12 @@
 - 스킬을 만들거나 수정할 때는 [스킬 내부 배치](standards/skills/skill-layout.md), [내용 작성](standards/skills/skill-content.md), [검증](standards/skills/skill-validation.md) 규격을 확인한다.
 - 기계 검사 실행 방법은 [검사 스크립트 사용 가이드라인](tools/guidelines.md)을 따른다.
 - 검사기 자체를 수정하거나 실행 환경의 영향을 확인할 때는 [검사 스크립트의 개발과 자체 검증](tools/guidelines.md#검사-스크립트의-개발과-자체-검증)을 확인한다.
+
+### 공용 모델 선택
+
+스킬에서 작업 성격에 맞는 모델과 추론 강도를 제안할 때는
+[공용 모델 선택 기준](shared/model-selection.md)을 참조한다.
+승인과 실제 적용 절차는 각 스킬의 지침을 따른다.
 
 ### 시나리오 실행
 
