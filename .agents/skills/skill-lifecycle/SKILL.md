@@ -24,4 +24,6 @@ description: |
 - 명세서의 `current_stage`에 해당하는 `references/stages/<단계 식별자>.md`를 읽는다. 최초 기록 전에는 현재 논의와 판단에 필요한 단계 문서를 확인한다. 다른 단계에 관련된 내용을 기록하거나 판단할 때도 그 단계의 필요한 항목만 확인한다.
 - 명세서의 생성과 갱신은 [명세서 기록 트리거](references/lifecycle.md#명세서-기록-트리거)를, history의 갱신은 [작업 기록 갱신](references/lifecycle.md#작업-기록-갱신)을 따른다. 논의 중 매 응답마다 기록하지 않는다.
 - 명세서를 기록할 때는 [작업 내용과 결과](references/specification.md#작업-내용과-결과)와 [논의 내용의 배치](references/specification.md#논의-내용의-배치)에 따라 기존 항목을 간결하게 갱신하고, 저장 전 정리와 저장 후 [기록 대조](references/specification.md#명세서-작성-시-확인할-사항)를 수행한다. 전체 형식은 같은 문서를 따른다.
+- 작업 범위를 파악한 뒤 모델을 제안하기 전에 [공용 모델 선택 기준](../../../shared/model-selection.md)을 읽고,
+  [모델 제안과 승인](references/lifecycle.md#모델-제안과-승인)에 따라 작업 묶음의 모델과 강도를 승인받아 진행한다.
 - 선택한 단계 문서의 조건과 근거를 확인하고 사용자 요청 범위에서 작업, 기록 및 전이를 진행한다.
