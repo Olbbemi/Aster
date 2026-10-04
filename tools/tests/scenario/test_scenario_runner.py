@@ -112,6 +112,24 @@ class RunnerTests(unittest.TestCase):
         with self.assertRaises(runner.RunnerError):
             runner.validate_case(str(self.repo), '01')
 
+    def test_missing_unrelated_root_does_not_block_existing_root(self):
+        config = self.repo / '.codex/config.toml'
+        missing = self.root / 'removed-work'
+        config.write_text('[sandbox_workspace_write]\nwritable_roots = ' +
+                          json.dumps([str(missing), str(self.allowed)]) + '\n')
+        self.args()
+        self.assertEqual(runner.validate_case(str(self.case), '01')[0], self.case)
+        with self.assertRaises(runner.RunnerError):
+            runner.validate_case(str(self.repo), '01')
+
+    def test_only_missing_roots_do_not_authorize_existing_case(self):
+        (self.repo / '.codex/config.toml').write_text(
+            '[sandbox_workspace_write]\nwritable_roots = ' +
+            json.dumps([str(self.root / 'removed-work')]) + '\n')
+        self.args()
+        with self.assertRaises(runner.RunnerError):
+            runner.validate_case(str(self.case), '01')
+
     def test_case_symlink_escape(self):
         (self.allowed / 'escape').symlink_to(self.repo, target_is_directory=True)
         with self.assertRaises(runner.RunnerError):
