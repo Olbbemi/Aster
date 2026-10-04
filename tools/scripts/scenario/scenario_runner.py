@@ -81,7 +81,13 @@ def validate_case(raw, step):
     raw_roots = config.get('sandbox_workspace_write', {}).get('writable_roots', [])
     if not raw_roots or not all(isinstance(r, str) and Path(r).is_absolute() for r in raw_roots):
         raise RunnerError('Aster writable_roots must contain absolute paths')
-    roots = [Path(r).resolve(strict=True) for r in raw_roots]
+    roots = []
+    for raw_root in raw_roots:
+        try:
+            roots.append(Path(raw_root).resolve(strict=True))
+        except FileNotFoundError:
+            # A removed, unrelated work root does not authorize any path.
+            continue
     case = Path(raw)
     if not case.is_absolute():
         raise RunnerError('case must be an absolute path')
