@@ -56,6 +56,7 @@ Codex와 Claude에서 같은 절차를 사용하며 실행 도구의 차이는 �
 | --- | --- |
 | [references/workflow.md](references/workflow.md) | 시작/재개 시 진행 흐름과 필요한 지침의 연결을 읽는다. 기본 단계 목록은 이 문서에서 관리한다. |
 | [references/guidelines.md](references/guidelines.md) | 공통 적용과 자료 사용 기준을 확인하고, 주제 선택/기록/승인/회귀 등 현재 작업에 해당하는 절을 읽는다. |
+| [references/report-checks.md](references/report-checks.md) | 저장한 결과의 최종 검토/승인 전이나 재개/다음 단계의 기존 report를 사용할 때 읽기 전용 검사 방법과 판정 범위를 확인한다. |
 | [references/ai_agents/model-selection.md](references/ai_agents/model-selection.md) | 시작/재개 및 모델이나 담당 범위를 조정할 때 공용표 참조, 작업 묶음별 승인과 실제 적용 확인 및 기록 기준을 읽는다. |
 | [references/ai_agents/review-execution.md](references/ai_agents/review-execution.md) | 교차 검증을 수행하기로 한 경우 상대 CLI의 호출과 결과 확인에 사용한다. |
 | references/stages/ | 현재 단계 지침을 읽는다. 다른 단계는 필요한 입력이나 기준을 확인할 때만 참조한다. |
