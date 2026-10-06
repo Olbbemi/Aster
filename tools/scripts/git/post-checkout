@@ -1,26 +1,30 @@
 #!/usr/bin/env python3
-"""Prepare Aster's shared todo directory after a branch checkout."""
+"""Dispatch work-data preparation on first checkout or explicit initialization."""
 
+import os
 from pathlib import Path
 import sys
 
 
 def main():
-    if len(sys.argv) != 4 or sys.argv[3] not in ("0", "1"):
-        print("Usage: post-checkout OLD_HEAD NEW_HEAD BRANCH_FLAG (0 or 1)",
-              file=sys.stderr)
-        return 1
-    if sys.argv[3] == "0":
-        return 0
+    args = sys.argv[1:]
+    explicit = args == ["--initialize"]
+    if not explicit:
+        if len(args) != 3 or args[2] not in ("0", "1"):
+            print("Usage: post-checkout OLD_HEAD NEW_HEAD BRANCH_FLAG (0 or 1) "
+                  "| --initialize", file=sys.stderr)
+            return 1
+        # Git uses a null old HEAD for the initial checkout, including worktrees.
+        if args[2] == "0" or len(args[0]) not in (40, 64) or set(args[0]) != {"0"}:
+            return 0
     try:
-        # mkdir preserves directory links and rejects files and dangling links.
-        # Use the project identity, not the clone or worktree directory name.
-        todo = Path.home() / ".local/share/aster/todo"
-        todo.mkdir(parents=True, exist_ok=True)
-    except (OSError, RuntimeError) as error:
+        operation = Path(__file__).resolve().parent / "operations/prepare_work_data.py"
+        mode = "--initialize" if explicit else "--checkout"
+        # Replace the process to preserve stdin, output and the operation's status.
+        os.execv(sys.executable, [sys.executable, "-I", "-B", str(operation), mode])
+    except OSError as error:
         print(f"Aster post-checkout: {error}", file=sys.stderr)
         return 1
-    return 0
 
 
 if __name__ == "__main__":
