@@ -2,7 +2,7 @@
 
 검사 단위와 판정 기준의 정본은 [Git 운영 규칙](../../.github/git-workflow.md#플러그인-버전-확인)이다.
 
-[검사기](../scripts/validation/check_plugin_versions.py)는 Git의 커밋 또는 스테이징 상태를 읽고,
+[검사기](../scripts/git/operations/check_plugin_versions.py)는 Git의 커밋 또는 스테이징 상태를 읽고,
 [pre-push 진입점](../scripts/git/pre-push)은 실제 전송할 ref 정보를 검사기에 전달한다.
 
 공통 훅의 실행 환경은 [Hortulanus README](https://github.com/Olbbemi/Hortulanus#readme)의
@@ -22,9 +22,9 @@
 
 ```bash
 # 커밋 전: BASE_REF를 실제 비교 기준으로 바꾼다. 스테이징 내용만 검사한다.
-python3 -I -B tools/scripts/validation/check_plugin_versions.py check --base BASE_REF --staged
+python3 -I -B tools/scripts/git/operations/check_plugin_versions.py check --base BASE_REF --staged
 # 커밋 후: TARGET_REF를 실제 푸시할 커밋/ref로 바꾼다.
-python3 -I -B tools/scripts/validation/check_plugin_versions.py check --base BASE_REF --target TARGET_REF --remote origin
+python3 -I -B tools/scripts/git/operations/check_plugin_versions.py check --base BASE_REF --target TARGET_REF --remote origin
 ```
 
 `--remote`는 이미 원격에 반영된 변경 전파를 확인할 때 사용한다.
@@ -79,5 +79,5 @@ CI에는 자동 적용되지 않는다.
 Aster의 실제 원격에 시험용 커밋을 푸시하지 않는다.
 
 ```bash
-python3 -I -B -m unittest discover -s tools/tests/validation -p 'test_check_plugin_versions.py' -v
+python3 -I -B -m unittest discover -s tools/tests/git -p 'test_check_plugin_versions.py' -v
 ```
