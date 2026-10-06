@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 
-SCRIPT = Path(__file__).resolve().parents[2] / "scripts/git/sync_integrate_branches.py"
+SCRIPT = Path(__file__).resolve().parents[2] / "scripts/git/operations/sync_integrate_branches.py"
 
 
 class PropagationTests(unittest.TestCase):

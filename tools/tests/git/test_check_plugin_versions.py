@@ -10,7 +10,7 @@ import unittest
 
 
 CHECKS = Path(__file__).resolve().parents[2]
-SCRIPT = CHECKS / "scripts/validation/check_plugin_versions.py"
+SCRIPT = CHECKS / "scripts/git/operations/check_plugin_versions.py"
 HOOK = CHECKS / "scripts/git/pre-push"
 
 
@@ -53,7 +53,7 @@ class PluginVersionTests(unittest.TestCase):
     def write_project_tools(self):
         self.write("tools/scripts/git/pre-push", HOOK.read_text())
         (self.repo / "tools/scripts/git/pre-push").chmod(0o755)
-        self.write("tools/scripts/validation/check_plugin_versions.py", SCRIPT.read_text())
+        self.write("tools/scripts/git/operations/check_plugin_versions.py", SCRIPT.read_text())
 
     def manifest(self, name, version):
         self.write(f"plugins/{name}/.claude-plugin/plugin.json",
@@ -92,7 +92,7 @@ class PluginVersionTests(unittest.TestCase):
         self.manifest("Other", "invalid")
         base = self.commit()
         for path in ("AGENTS.md", ".agents/skills/skill-lifecycle/SKILL.md",
-                     "tools/scripts/git/shared.py", ".agents/plugins/marketplace.json",
+                     "tools/scripts/git/operations/shared.py", ".agents/plugins/marketplace.json",
                      "plugins/catalog.txt"):
             self.write(path, "common change\n")
         self.commit()
