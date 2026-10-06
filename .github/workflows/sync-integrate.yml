@@ -26,4 +26,4 @@ jobs:
       - name: Test propagation with disposable local remotes
         run: python3 -I -B -m unittest discover -s tools/tests/git -p test_sync_integrate_branches.py -v
       - name: Propagate and verify remote integration branches
-        run: python3 -I -B tools/scripts/git/sync_integrate_branches.py
+        run: python3 -I -B tools/scripts/git/operations/sync_integrate_branches.py

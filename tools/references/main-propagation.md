@@ -1,7 +1,8 @@
 # main 변경 자동 전파
 
 운영 규칙과 판정 기준의 정본은 [Git 운영 규칙](../../.github/git-workflow.md#main-변경의-전파)이다.
-`.github/workflows/sync-integrate.yml`이 `tools/scripts/git/sync_integrate_branches.py`를 실행한다.
+`.github/workflows/sync-integrate.yml`이
+`tools/scripts/git/operations/sync_integrate_branches.py`를 실행한다.
 
 ## 실행 환경과 동작
 
@@ -43,7 +44,7 @@ Aster 원격에 푸시하지 않으며 GitHub 인증과 이벤트 전달은 검�
 지정 저장소의 실제 `origin/integrate/*`를 갱신하므로 Git 운영 규칙의 원격 변경 권한을 확인한 뒤 사용한다.
 
 ```bash
-python3 -I -B tools/scripts/git/sync_integrate_branches.py --repo /path/to/repository
+python3 -I -B tools/scripts/git/operations/sync_integrate_branches.py --repo /path/to/repository
 ```
 
 ## 최초 GitHub 검증
