@@ -394,5 +394,154 @@ class ReferenceTests(unittest.TestCase):
         self.assertEqual(self.cli().returncode, 2)
 
 
+class CompletionReportTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="aster-report-references-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "repository"
+        self.root.mkdir()
+        self.git("init", "-q")
+        self.report = self.root / "records/task"
+        self.report.mkdir(parents=True)
+        self.source = self.report / "specification.md"
+        self.source.write_text("# Report\n")
+        self.write(".gitignore", "/data/\n/records/task/ignored.md\n")
+        self.write("docs/guide.md", "# Guide\n")
+        self.git("add", ".gitignore", "docs/guide.md")
+
+    def git(self, *args):
+        return subprocess.run(["git", "-c", "core.hooksPath=/dev/null", *args],
+                              cwd=self.root, check=True, capture_output=True)
+
+    def write(self, name, content="data"):
+        path = self.root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
+        return path
+
+    def check(self, content=None):
+        if content is not None:
+            self.source.write_text(content)
+        return check_references(self.report, completion_report=True)
+
+    def test_untracked_report_and_asset_pass_with_commit_notice(self):
+        self.write("records/task/result.txt")
+        result = self.check("[guide](../../docs/guide.md#guide) [new](result.txt)")
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertEqual(result["preservation"]["untracked_files"],
+                         ["records/task/result.txt", "records/task/specification.md"])
+        self.assertEqual([item["git_state"] for item in result["checks"]], ["tracked", "untracked"])
+
+    def test_tracked_report_has_no_commit_notice(self):
+        self.git("add", "records/task/specification.md")
+        result = self.check("# Report\n\n[self](#report)")
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertEqual(result["preservation"]["untracked_files"], [])
+
+    def test_absolute_paths_and_file_uris_fail_even_when_existing(self):
+        asset = self.root / "docs/guide.md"
+        result = self.check(f"[absolute]({asset}) [uri]({asset.as_uri()}) [win](C:/temp/file.md)")
+        self.assertEqual(result["counts"]["FAIL"], 3, result)
+
+    def test_relative_outside_repository_fails(self):
+        outside = Path(self.temp.name) / "outside.md"
+        outside.write_text("# Outside")
+        result = self.check("[outside](../../../outside.md)")
+        self.assertEqual(result["counts"]["FAIL"], 1, result)
+
+    def test_ignored_and_git_metadata_targets_fail(self):
+        self.write("data/proof.md", "# Proof")
+        result = self.check("[ignored](../../data/proof.md) [git](../../.git/config)")
+        self.assertEqual(result["counts"]["FAIL"], 2, result)
+
+    def test_ignored_source_document_is_not_read_as_valid_report(self):
+        self.write("records/task/ignored.md", "[bad](not-present.md)")
+        result = self.check()
+        self.assertEqual(result["counts"]["FAIL"], 1, result)
+        self.assertEqual(result["checks"][0]["id"], "document.preservation")
+
+    def test_missing_target_and_fragment_still_fail(self):
+        result = self.check("[missing](absent.md) [fragment](../../docs/guide.md#absent)")
+        self.assertEqual(result["counts"]["FAIL"], 2, result)
+
+    def test_empty_and_ignored_only_directories_fail(self):
+        (self.root / "empty").mkdir()
+        self.write("data/proof.md")
+        result = self.check("[empty](../../empty/) [ignored](../../data/)")
+        self.assertEqual(result["counts"]["FAIL"], 2, result)
+
+    def test_directory_reports_untracked_contents(self):
+        self.write("attachments/new.txt")
+        result = self.check("[tracked](../../docs/) [new](../../attachments/)")
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertIn("attachments/new.txt", result["preservation"]["untracked_files"])
+
+    def test_history_paths_and_nonlocal_urls_are_not_failures(self):
+        result = self.check('`/tmp/old` and /home/old\n\n```text\n/home/past\n```\n\n'
+                            '[web](https://example.invalid) [network](//example.invalid/path) '
+                            '[custom](custom:record)')
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertEqual(result["counts"]["SKIP"], 3, result)
+
+    def test_relative_symlink_checks_alias_and_target(self):
+        self.write("proofs/proof.txt")
+        (self.report / "alias.txt").symlink_to("../../proofs/proof.txt")
+        result = self.check("[proof](alias.txt)")
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertIn("records/task/alias.txt", result["preservation"]["untracked_files"])
+        self.assertIn("proofs/proof.txt", result["preservation"]["untracked_files"])
+
+    def test_absolute_symlink_inside_repository_fails(self):
+        (self.report / "alias.txt").symlink_to(self.root / "docs/guide.md")
+        result = self.check("[proof](alias.txt)")
+        self.assertEqual(result["exit_code"], 1, result)
+
+    def test_symlink_to_ignored_or_external_target_fails(self):
+        self.write("data/proof.txt")
+        (self.report / "ignored.txt").symlink_to("../../data/proof.txt")
+        external = Path(self.temp.name) / "proof.txt"
+        external.write_text("proof")
+        (self.report / "external.txt").symlink_to("../../../proof.txt")
+        result = self.check("[ignored](ignored.txt) [external](external.txt)")
+        self.assertEqual(result["counts"]["FAIL"], 2, result)
+
+    def test_symlink_then_parent_keeps_filesystem_meaning(self):
+        (self.root / "actual/child").mkdir(parents=True)
+        (self.root / "alias").symlink_to("actual/child", target_is_directory=True)
+        self.write("actual/proof.txt")
+        result = self.check("[proof](../../alias/../proof.txt)")
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertEqual(result["checks"][0]["repository_target"], "actual/proof.txt")
+
+    def test_unicode_spaces_and_literal_glob_names(self):
+        self.write("proofs/한글 [자료].txt")
+        result = self.check("[proof](<../../proofs/한글 [자료].txt>)")
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertIn("proofs/한글 [자료].txt", result["preservation"]["untracked_files"])
+
+    def test_git_is_required_only_for_completion_mode(self):
+        plain = Path(self.temp.name) / "plain"
+        plain.mkdir()
+        (plain / "report.md").write_text("# Report")
+        self.assertEqual(check_references(plain)["exit_code"], 0)
+        self.assertEqual(check_references(plain, completion_report=True)["exit_code"], 2)
+
+    def test_git_failure_is_error(self):
+        with patch("check_references.subprocess.run", side_effect=OSError("git unavailable")):
+            result = self.check()
+        self.assertEqual(result["exit_code"], 2, result)
+        self.assertEqual(result["checks"][0]["id"], "preservation.repository")
+
+    def test_cli_preserves_report_and_index(self):
+        self.source.write_text("[guide](../../docs/guide.md#guide)")
+        before = (self.source.read_bytes(), (self.root / ".git/index").read_bytes())
+        run = subprocess.run([sys.executable, "-B", str(SCRIPT), str(self.report),
+                              "--completion-report", "--json"], cwd=self.temp.name,
+                             capture_output=True, text=True, timeout=15)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        self.assertEqual(json.loads(run.stdout)["scope"], "completion-report-local-references")
+        self.assertEqual(before, (self.source.read_bytes(), (self.root / ".git/index").read_bytes()))
+
+
 if __name__ == "__main__":
     unittest.main()
