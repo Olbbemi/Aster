@@ -8,16 +8,20 @@ Aster 내부 스킬이 매핑에 연결된 검사 스크립트를 사용할 때 
 시나리오 실행기의 사용 계약은 각 [개별 안내](references/)를 따른다.
 
 검사 스크립트는 대상을 읽기만 하며 대상 스킬을 실행하지 않는다.
+검사 대상은 개별 안내에 따라 스킬 디렉토리 또는 작업 명세서 등으로 구분한다.
 이 디렉토리의 문서와 코드는 개발용 자료이며 플러그인 배포물에는 포함하지 않는다.
 문서 링크는 각 문서가 있는 디렉토리를 기준으로 해석한다.
 
 ## 사용 순서
 
-1. 호출 스킬의 이름과 검사 요청의 대상 및 범위를 확인한다.
-2. [mappings.md](mappings.md)에서 호출 스킬에 연결된 스크립트 목록을 찾는다.
-3. 실행할 스크립트마다 매핑에 연결된 개별 가이드 문서를 읽고, 대상에 맞는 입력과 명령을 사용한다.
-4. 개별 안내에 따라 검사하고 종료 코드와 출력 결과를 확보한다. 여러 대상이 있으면 대상별 결과를 구분한다.
-5. 아래 결과 제공 기준에 따라 실행 결과와 미실행 내역을 호출 스킬의 지침으로 전달한다.
+1. 호출 스킬의 이름과 현재 단계 또는 검사 요청의 대상 및 범위를 확인한다.
+2. [mappings.md](mappings.md)에서 호출 스킬의 검사기와 적용 시점을 정하는 지침을 찾는다.
+   해당 지침에 따라 이번에 확인할 항목을 선정하며 등록된 검사기 전부를 일괄 실행하지 않는다.
+3. 선정한 검사기의 개별 안내를 읽고 입력, 명령과 판정 범위를 확인한다.
+   호출 지침이 기존 결과 재사용을 허용하면 그 조건을 충족하는 근거를 연결하고, 나머지는 실행 대상으로 정한다.
+4. 실행 대상은 개별 안내에 따라 검사하고 종료 코드와 출력 결과를 확보한다.
+   여러 대상이 있으면 대상별 결과를 구분한다.
+5. 아래 결과 제공 기준에 따라 이번 실행, 기존 결과 재사용 및 미실행 내역을 호출 스킬의 지침으로 전달한다.
 
 매핑과 개별 안내는 준비된 구성을 사용한다. 호출 스킬에서 각 도구의 준비 여부를
 별도 사전 점검 목록으로 다시 확인할 필요는 없다. 실행 중 입력 부족, 의존성 부재나
@@ -48,14 +52,16 @@ python3 -m pip install -r tools/requirements.txt
 
 - 스크립트와 대상별로 사용한 입력/명령, 실제 종료 코드, 항목별 결과와 근거를 제공한다.
   실행하지 않았으면 이유를 제공하고, stdout/stderr 등 별도 근거 자료가 있으면 그 위치를 연결한다.
+- 기존 결과를 재사용했다면 원래 실행 근거와 현재도 유효하다고 판단한 이유를 제공한다.
+  이번 실행과 구분하고, 호출 지침의 재사용 조건을 확인하지 못하면 검사 통과로 처리하지 않는다.
 - 대상이 검사 범위에 해당하지 않는 경우와 필요한 입력/의존성이 없어 실행할 수 없는 경우를 구분한다.
-- 필요한 기계 검증을 수행할 스크립트가 없거나 기존 스크립트의 검사 범위로 충족할 수 없으면,
-  해당 검증 항목과 부족한 내용을 확인한 시점에 사용자에게 알린다. 기존 검사기의 보완 또는
-  새 검사기의 별도 개발이 필요함을 설명하고, 호출 스킬의 지침에 따라 후속 작업으로 정리한다.
-  해당 검증을 통과나 검증 불필요로 처리하지 않는다.
+- 필요한 기계 검증을 수행할 스크립트가 없거나 기존 스크립트의 검사 범위로 충족할 수 없으면, 해당 검증 항목과 부족한 내용을 확인한 시점에 사용자에게 알린다.
+  - 기존 검사기의 보완 또는 새 검사기의 별도 개발이 필요함을 설명하고, 호출 스킬의 지침에 따라 후속 작업으로 정리한다.
+  - 해당 검증을 통과나 검증 불필요로 처리하지 않는다.
 - `SKIP`은 해당 항목의 유효성을 확인했다는 뜻이 아니다. `UNCHECKED`와 `ERROR`도 통과로 처리하지 않는다.
   개별 가이드의 범위와 한계를 함께 제공한다.
-- 매핑 목록과 실행/미실행 내역을 대조하여 이유 없이 빠진 스크립트나 대상이 없는지 확인한다.
+- 이번 호출에 적용하는 검사 항목과 실행/재사용/미실행 내역을 대조하여 빠진 대상이 없는지 확인한다.
+  다른 시점에 적용할 검사기를 현재 미실행이라는 이유만으로 실패 처리하지 않는다.
 - 검사 결과의 기록 위치와 형식, 작업 완료 여부, 후속 작업 및 사용자 승인은 호출 스킬의 지침을 따른다.
   스크립트의 종료 코드만으로 호출 스킬의 작업 완료를 결정하지 않는다.
 
@@ -71,6 +77,7 @@ python3 -m pip install -r tools/requirements.txt
 
 이 절은 검사 스크립트를 새로 만들거나 수정할 때, 또는 실행 환경 변경의 영향을 확인할 때 사용한다.
 스킬이 기존 검사 스크립트를 사용하는 일반 실행 절차에는 이 절 읽기와 자체 테스트를 포함하지 않는다.
+
 `tests/`는 `scripts/`의 검사 코드가 규격에 맞는 대상을 검사하고 올바르게 판정하는지 확인한다.
 
 ### 테스트 파일별 목적과 범위
@@ -78,7 +85,10 @@ python3 -m pip install -r tools/requirements.txt
 | 테스트 파일 | 검사 코드 | 대표 검증 범위 |
 | --- | --- | --- |
 | [test_structure.py](tests/validation/test_structure.py) | [check_structure.py](scripts/validation/check_structure.py) | 기본 구조와 프론트매터의 정상/오류 판정 |
+| [test_lifecycle_specification.py](tests/validation/test_lifecycle_specification.py) | [check_lifecycle_specification.py](scripts/validation/check_lifecycle_specification.py) | 표준 명세서 형식, 단계 문서 구조와 템플릿 대응, 오류 구분과 읽기 전용 동작 |
 | [test_references.py](tests/validation/test_references.py) | [check_references.py](scripts/validation/check_references.py) | 링크 추출/경로 해석, 제목과 명시 앵커, 절 대조 및 오류/미판정 처리 |
+| [test_scenario_records.py](tests/validation/test_scenario_records.py) | [check_scenario_records.py](scripts/validation/check_scenario_records.py) | 표의 ID/요건/결과 대응, 범위와 실행 상태 구분, 오류 및 읽기 전용 동작 |
+| [test_ascii_flows.py](tests/validation/test_ascii_flows.py) | [check_ascii_flows.py](scripts/validation/check_ascii_flows.py) | 표시한 도식의 구분자/문자 형식, 한글 허용, 오류와 읽기 전용 동작 |
 | [test_distribution.py](tests/validation/test_distribution.py) | [check_distribution.py](scripts/validation/check_distribution.py) | 배포 JSON, 등록 경로와 기대 파일 목록 대조 |
 
 공통으로 실제 CLI 호출의 출력과 종료 코드가 기대값과 일치하는지, 검사 대상이 변경되지 않는지 확인한다.
@@ -92,7 +102,8 @@ Python과 의존성 준비는 위 [공통 실행 조건](#공통-실행-조건)�
 Aster 저장소 루트에서 전체 시험을 실행한다.
 
 ```bash
-for test_file in test_structure.py test_references.py test_distribution.py; do
+for test_file in test_structure.py test_lifecycle_specification.py test_references.py \
+  test_scenario_records.py test_ascii_flows.py test_distribution.py; do
   python3 -B -m unittest discover -s tools/tests/validation -p "$test_file" -v || exit
 done
 ```

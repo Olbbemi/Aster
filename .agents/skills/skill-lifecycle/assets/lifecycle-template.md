@@ -7,10 +7,13 @@ current_stage: problem-definition
 
 # <작업 주제> 생명 주기 명세서
 
-<!-- 제목과 operation의 자리표시자는 실제 작업에 맞게 바꾼다. name과 target_path의 미정값은 references/specification.md의 프론트매터 기준에 따라 처리한다. -->
-<!-- current_stage는 references/lifecycle.md의 최초 기록의 단계 판단에 따라 정한다. 단계 이동 기록에는 최초 상태 산정과 실제 이후 전이를 구분한다. -->
+<!-- 제목과 operation의 자리표시자는 실제 작업에 맞게 바꾼다.
+name과 target_path의 미정값은 references/specification.md의 프론트매터 기준에 따라 처리한다. -->
+<!-- current_stage는 references/lifecycle.md의 최초 기록의 단계 판단에 따라 정한다.
+단계 이동 기록에는 최초 상태 산정과 실제 이후 전이를 구분한다. -->
 <!-- 작성 기준: skill-lifecycle 스킬 디렉토리의 references/specification.md, references/lifecycle.md 및 references/stages/<단계 식별자>.md. -->
-<!-- 현재 단계 밖의 선행 논의도 기록하며 내용의 기록 상태와 단계 진입/완료 판단을 구분한다. 배치와 저장 후 대조는 skill-lifecycle 스킬 디렉토리의 references/specification.md에 있는 "단계별 본문 기록 기준"과 "명세서 작성 시 확인할 사항"을 따른다. -->
+<!-- 현재 단계 밖의 선행 논의도 기록하며 내용의 기록 상태와 단계 진입/완료 판단을 구분한다.
+배치와 저장 후 대조는 skill-lifecycle 스킬 디렉토리의 references/specification.md에 있는 "단계별 본문 기록 기준"과 "명세서 작성 시 확인할 사항"을 따른다. -->
 
 ## problem-definition (문제 정의)
 
@@ -66,6 +69,10 @@ current_stage: problem-definition
 ### 스킬 실행에 적용되는 제약, 실패 조건과 대응
 
 ### 사용자 확인 및 승인 조건
+
+<!-- 필요한 승인 조건과 실제 승인 상태를 구분한다.
+진행 중 기록 형식은 강제하지 않는다.
+완료 시 references/completion-records.md의 "승인 기록 정리"에 따라 체크리스트로 정리한다. -->
 
 ### 각 요건의 충족 여부를 검증할 수 있는 기준
 
@@ -327,6 +334,9 @@ current_stage: problem-definition
 
 ## completed (완료)
 
+<!-- 완료 판단 전에 references/completion-records.md에 따라 명세서 전체를 최종 보고서로 정리하고 보존본을 대조한다.
+필수 항목을 유지하고 작성 안내 주석은 최종 보고서에서 제거한다. -->
+
 ### 진입 조건 확인
 
 | 조건 | 확인 결과 | 판단 근거와 자료 위치 |
@@ -338,10 +348,6 @@ current_stage: problem-definition
 ### 생명 주기의 완료 여부를 판단한 근거
 
 ### 완료 여부를 판단하는 시점에 남아 있는 미확인 사항과 위험
-
-### 완료 조건을 충족한 경우 `completed` (완료)로 유지된 현재 단계
-
-<!-- 현재 단계 값은 프론트매터의 current_stage에서 관리한다. -->
 
 ### 완료 조건 확인
 
