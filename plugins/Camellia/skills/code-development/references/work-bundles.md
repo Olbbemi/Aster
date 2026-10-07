@@ -134,7 +134,8 @@ report 경로/파일명과 필수 `status`/`base_on`은 유지한다.
 | 설계부터 | 묶음의 구현용 계약/흐름/검증이 미정. 묶음 design의 base_on은 승인된 공통 discussion |
 | 구현부터 | 해당 묶음의 계약/흐름/검증과 환경이 공통 design에 확정됨. 묶음 implementation의 base_on은 그 공통 design |
 
-- 같은 묶음 design이 있으면 implementation은 그 report를 선행으로 사용한다.
+- 같은 묶음 design이 있으면 현재 진행/승인용 implementation은 그 report를 선행으로 사용한다.
+  hold/superseded implementation이 기존 공통 design을 참조했다면 그 과거 연결은 보존한다.
 - verification/qa는 같은 묶음의 바로 앞 단계 report를 선행으로 사용한다.
 - `base_on`은 기존처럼 같은 디렉토리의 전체 파일명이며 경로를 넣지 않는다.
 
