@@ -691,6 +691,32 @@ class ReportTests(unittest.TestCase):
         self.change(self.manifest, '- stages:', '> stages:')
         self.has(self.check(), 'manifest.format', 'FAIL')
 
+    def test_diagram_fence_rejects_markers_that_remain_body_content(self):
+        for marker in ('```', '~~~'):
+            for prefix in ('    ', '> ', '\t'):
+                for ending in ('', '\n'):
+                    with self.subTest(marker=marker, prefix=prefix, ending=ending):
+                        path = self.design_body(f'{marker}text ascii-flow\n[A] -> [B]\n{prefix}{marker}')
+                        path.write_text(path.read_text().rstrip('\n') + ending)
+                        result = self.check()
+                        self.assertEqual(result['diagrams_checked'], 1)
+                        self.has(result, 'diagram.fence', 'FAIL')
+
+    def test_diagram_fence_accepts_valid_containers_and_empty_blocks(self):
+        for body in ('```text ascii-flow\n```',
+                     '~~~text ascii-flow\n[A] -> [B]\n~~~~',
+                     '```text ascii-flow\n[A] -> [B]\n   ```',
+                     '> ```text ascii-flow\n> [A] -> [B]\n> ```',
+                     '- ```text ascii-flow\n  [A] -> [B]\n  ```'):
+            for ending in ('', '\n'):
+                with self.subTest(body=body, ending=ending):
+                    path = self.design_body(body)
+                    path.write_text(path.read_text().rstrip('\n') + ending)
+                    result = self.check()
+                    self.assertEqual(result['diagrams_checked'], 1)
+                    self.has(result, 'diagram.fence', 'PASS')
+                    self.assertEqual(result['exit_code'], 0, result)
+
     def test_unreadable_encoding_is_execution_error(self):
         (self.topic / 'design-report-001.md').write_bytes(b'\xff')
         self.has(self.check(), 'report.read', 'ERROR')
