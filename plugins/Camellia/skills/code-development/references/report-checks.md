@@ -101,7 +101,7 @@ python3 -B <스킬 경로>/scripts/check_report_diagrams.py <작업 주제 경�
 | manifest | 선택 작업의 H2 디렉토리 링크, stages/reference_reports 필드와 중복 없는 단계 식별자 목록 |
 | report 파일명 | 해당 작업 stages에 포함된 단계와 001부터 사용하는 양수 번호 형식. 세 자리보다 큰 번호도 허용 |
 | report 개정 | 단일 플로우는 단계별, 순차 묶음은 단계/bundle별 가장 큰 번호가 현재이고 같은 범위의 이전 번호는 superseded인지 |
-| 선택 bundle | 식별자 문자열 형식과 공통/묶음 선행 범위의 일치. 분할표의 타당성이나 실제 승인은 판정하지 않음 |
+| 선택 bundle | 식별자 문자열 형식과 공통/묶음 선행 범위의 일치. 묶음표의 타당성이나 실제 승인은 판정하지 않음 |
 | base_on | 첫 단계는 null, 이후는 같은 작업의 바로 앞 단계 report 파일인지. 묶음 design은 공통 discussion, 구현 시작 묶음은 공통 design, 이후는 같은 묶음인지 |
 | 선행 상태 | 현재 진행/승인용 report의 선행 입력이 completed인지. hold/superseded의 과거 연결은 보존 |
 
@@ -178,6 +178,8 @@ H2 `완료 체크리스트` 안 H3 `일괄 반영 기록`의 표 또는 기존 �
 - 표의 식별자 형식과 중복, 필수 열과 빈 값
 - 현재 묶음 report의 식별자가 표에 등록되어 있는지
 - 결과 참조의 실제 Markdown 링크가 같은 작업/묶음의 구현/검증/QA report인지
+
+검사 결과와 예외는 다음과 같이 구분한다.
 
 - 미시작 묶음과 아직 없는 후속 report는 허용하며 결과 링크 생성을 강제하지 않는다.
 - 과거 superseded report의 묶음 등록은 현재 표에 소급 요구하지 않는다.
