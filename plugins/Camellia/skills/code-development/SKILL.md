@@ -73,6 +73,8 @@ Codex와 Claude에서 같은 절차를 사용하며 실행 도구의 차이는 �
 | [references/guidelines.md](references/guidelines.md) | 공통 적용과 자료 사용 기준을 확인하고, 주제 선택/기록/승인/회귀 등 현재 작업에 해당하는 절을 읽는다. |
 | [references/design-artifacts.md](references/design-artifacts.md) | 설계 뼈대 기록과 최종 제출 전 구현용 정의, 그룹별 상세와 도식 표시 확인을 수행한다. |
 | [references/work-bundles.md](references/work-bundles.md) | 큰 설계의 뼈대/분할 판단과 같은 주제의 순차 묶음 진입/회귀/전체 완료를 확인한다. |
+| [references/deferred-work.md](references/deferred-work.md) | 플로우 밖 보류를 합의하거나 전체 완료 전 항목을 이동/정리할 때 읽는다. |
+| [references/legacy-records.md](references/legacy-records.md) | 기존 번호 형식을 조회/재개하거나 요청받은 전환을 수행할 때 읽는다. |
 | [references/report-checks.md](references/report-checks.md) | 저장한 결과의 최종 검토/승인 전이나 재개/다음 단계의 기존 report를 사용할 때 읽기 전용 검사 방법과 판정 범위를 확인한다. |
 | [references/ai_agents/model-selection.md](references/ai_agents/model-selection.md) | 시작/재개 및 모델이나 담당 범위를 조정할 때 공용표 참조, 작업 묶음별 승인과 실제 적용 확인 및 기록 기준을 읽는다. |
 | [references/ai_agents/review-execution.md](references/ai_agents/review-execution.md) | 교차 검증을 수행하기로 한 경우 상대 CLI의 호출과 결과 확인에 사용한다. |

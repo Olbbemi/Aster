@@ -20,11 +20,18 @@ except ImportError as exc:
 else:
     DEPENDENCY_ERROR = None
 
-REPORT = re.compile(r'([a-z][a-z0-9-]*)-report-([0-9]+)\.md\Z')
+REPORT = re.compile(r'([a-z][a-z0-9-]*)-report(?:-(?:rev-)?([0-9]+))?\.md\Z')
 BUNDLE = re.compile(r'[a-z0-9][a-z0-9-]*\Z')
-STATUSES = {'in_progress', 'awaiting_approval', 'completed', 'hold', 'superseded'}
+BUNDLE_DIRECTORY = re.compile(r'([0-9]{2,})-([a-z][a-z0-9-]*)\Z')
+REPORT_REVIEW = re.compile(r'[a-z][a-z0-9-]*-report(?:-rev-[0-9]+)?-review-[0-9]+\.md\Z')
+STATUSES = {'in_progress', 'in_review', 'awaiting_approval', 'completed', 'hold', 'superseded'}
 AREAS = ('단계 결과', '인계 사항', '완료 체크리스트', '사용자 승인')
 BASIS = 'references/report-checks.md'
+
+
+def legacy_name(name):
+    match = REPORT.fullmatch(name)
+    return bool(match and match[2] is not None and '-report-rev-' not in name)
 
 
 def visible(tokens):
@@ -119,6 +126,27 @@ class Context:
         self.diagram_count = 0
         self.selected_groups = []
         self._content_documents = None
+        self.legacy = False
+        self.bundle_directories = []
+
+    def scope(self, path, meta):
+        return meta.get('bundle') if self.legacy else (
+            path.parent.name if path.parent != self.topic else None)
+
+    def base_path(self, path, base):
+        if base is None:
+            return None
+        if self.legacy:
+            if not legacy_name(base) or Path(base).name != base:
+                raise ValueError('기존 base_on은 선행 report 파일명이어야 합니다.')
+            return self.topic / base
+        uri = urlsplit(base)
+        if uri.scheme or uri.netloc or Path(base).is_absolute() or any(c in base for c in '#?\\\0'):
+            raise ValueError('base_on은 작업 안의 report 상대 경로여야 합니다.')
+        target = Path(os.path.abspath(path.parent / base))
+        if not target.resolve().is_relative_to(self.topic.resolve()) or not REPORT.fullmatch(target.name) or legacy_name(target.name):
+            raise ValueError('base_on의 작업 경계와 report 형식을 확인하십시오.')
+        return target
 
     def add(self, rule, status, source, message, line=None):
         self.checks.append(dict(id=rule, status=status, source=str(source),
@@ -195,9 +223,13 @@ class Context:
             raise ValueError('report에 status/base_on 매핑이 필요합니다.')
         if not isinstance(meta['status'], str) or meta['status'] not in STATUSES:
             raise ValueError('허용되지 않은 status입니다.')
+        if meta['status'] == 'in_review' and (self.legacy or REPORT.fullmatch(path.name)[1] != 'design'):
+            raise ValueError('in_review는 신규 형식의 design에만 사용합니다.')
         base = meta['base_on']
-        if base is not None and (not isinstance(base, str) or not REPORT.fullmatch(base)):
-            raise ValueError('base_on은 null 또는 선행 report 파일명이어야 합니다.')
+        if base is not None:
+            if not isinstance(base, str) or not base:
+                raise ValueError('base_on은 null 또는 선행 report 상대 경로여야 합니다.')
+            self.base_path(path, base)
         if 'bundle' in meta and (not isinstance(meta['bundle'], str) or not BUNDLE.fullmatch(meta['bundle'])):
             raise ValueError('bundle은 소문자 영문/숫자로 시작하는 소문자 영문/숫자/하이픈 문자열이어야 합니다.')
         self.add('report.metadata', 'PASS', path, 'status/base_on 형식을 확인했습니다.')
@@ -237,18 +269,35 @@ class Context:
         groups, parsed, entries_by_stage = {}, {}, {}
         try:
             paths = sorted(self.topic.iterdir())
+            for directory in list(paths):
+                if not re.match(r'[0-9]+-', directory.name):
+                    continue
+                if directory.is_symlink():
+                    self.add('bundle.directory', 'UNCHECKED', directory, '번들 디렉토리 링크는 순회하지 않습니다.')
+                    continue
+                if not directory.is_dir():
+                    continue
+                self.bundle_directories.append(directory)
+                paths.extend(sorted(directory.iterdir()))
         except OSError as exc:
             self.add('input.read', 'ERROR', self.topic, str(exc))
             return False
+        formats = {legacy_name(p.name) for p in paths if REPORT.fullmatch(p.name)}
+        if len(formats) > 1:
+            self.add('report.format', 'FAIL', self.topic, '기존 번호 형식과 신규 무번호/rev 형식이 혼재합니다. 자동 변환하지 않습니다.')
+            return False
+        self.legacy = formats == {True}
         for path in paths:
             match = REPORT.fullmatch(path.name)
             if not match:
-                if '-report-' in path.name and path.suffix == '.md':
+                if '-report-' in path.name and path.suffix == '.md' and not REPORT_REVIEW.fullmatch(path.name):
                     self.add('report.filename', 'FAIL', path, 'report 파일명 형식이 잘못되었습니다.')
                 continue
-            stage, number = match[1], int(match[2])
-            if number < 1 or match[2] != f'{number:03d}' or stage not in stages:
+            stage, number = match[1], int(match[2]) if match[2] is not None else 0
+            if (match[2] is not None and (number < 1 or match[2] != f'{number:03d}')) or stage not in stages:
                 self.add('report.filename', 'FAIL', path, '단계/양수 세 자리 이상 번호를 확인하십시오.')
+            if self.legacy and path.parent != self.topic:
+                self.add('report.filename', 'FAIL', path, '기존 번호 형식의 report는 작업 루트에 둡니다.')
             entries_by_stage.setdefault(stage, []).append((number, path))
             try:
                 parsed[path] = self.report(path)
@@ -262,7 +311,8 @@ class Context:
             self.add('input.reports', 'ERROR', self.topic, '저장된 report가 없습니다. 최초 저장 전에는 실행하지 않습니다.')
         for stage, entries in entries_by_stage.items():
             for number, path in entries:
-                bundle = parsed[path][0].get('bundle') if path in parsed else None
+                bundle = self.scope(path, parsed[path][0]) if path in parsed else (
+                    path.parent.name if not self.legacy and path.parent != self.topic else None)
                 groups.setdefault((stage, bundle), []).append((number, path))
         self.parsed, self.groups, self.stages = parsed, groups, stages
         self.body_reports, self.current_reports = {}, {}
@@ -285,7 +335,7 @@ class Context:
             for path, (_, tokens) in self.body_reports.items():
                 self._content_documents.append((path, tokens))
                 if REPORT.fullmatch(path.name)[1] == 'design':
-                    self.details(self.topic / path.stem)
+                    self.details(path.parent / path.stem)
         return self._content_documents
 
     def details(self, directory):

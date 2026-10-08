@@ -143,6 +143,7 @@ def checklist(ctx, path, meta, tokens):
 def completion(ctx, path, stage, meta, tokens):
     if stage not in COMPLETIONS:
         return
+    allowed = COMPLETIONS[stage] if ctx.legacy else {'all_passed', 'handoff'}
     areas = sections(tokens, '사용자 승인', 2)
     if len(areas) != 1:
         return
@@ -155,13 +156,13 @@ def completion(ctx, path, stage, meta, tokens):
     heading, body = found[0]
     lines = [line.strip() for token in body if token.type == 'inline'
              for line in inline_lines(token) if line.strip()]
-    keywords = set().union(*COMPLETIONS.values())
+    keywords = set().union(*COMPLETIONS.values(), {'handoff'})
     if not required and (not lines or (lines[0] == '미정' and not any(line in keywords for line in lines[1:]))):
         return
-    valid = (len(lines) >= 2 and lines[0] in COMPLETIONS[stage] and
+    valid = (len(lines) >= 2 and lines[0] in allowed and
              not any(line in keywords for line in lines[1:]))
     ctx.add('report.completion', 'PASS' if valid else 'FAIL', path,
-             f'단계에 맞는 키워드 하나와 설명이 필요합니다: {", ".join(sorted(COMPLETIONS[stage]))}',
+             f'단계에 맞는 키워드 하나와 설명이 필요합니다: {", ".join(sorted(allowed))}',
              heading.map[0] + 1)
 
 
