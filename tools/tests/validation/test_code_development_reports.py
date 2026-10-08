@@ -22,7 +22,7 @@ checker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
 
 
-class ReportTests(unittest.TestCase):
+class ReportFixture:
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix='camellia-report-test-')
         self.addCleanup(self.tmp.cleanup)
@@ -86,6 +86,9 @@ class ReportTests(unittest.TestCase):
         self.write_report('design', status='completed', base='discussion-report-001.md')
         self.write_report('implementation', status='completed', base='design-report-001.md')
         return self.write_report('verification', status=status, base='implementation-report-001.md')
+
+
+class ReportTests(ReportFixture, unittest.TestCase):
 
     def test_completed_requires_real_nonempty_checked_items(self):
         path = self.topic / 'discussion-report-001.md'
@@ -846,6 +849,234 @@ class ReportTests(unittest.TestCase):
                              text=True, capture_output=True, timeout=15)
         self.assertEqual(run.returncode, 1, run.stderr)
         self.assertEqual(json.loads(run.stdout)['status'], 'FAIL')
+
+
+class ModernReportTests(ReportFixture, unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix='camellia-modern-report-test-')
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.topic = self.root / 'specs' / 'storage' / 'collection'
+        self.topic.mkdir(parents=True)
+        self.manifest = self.topic.parent / 'freight-manifest.md'
+        self.manifest.write_text('## [collection](collection/)\n\n'
+                                 '- stages: [discussion, design, implementation, verification, qa]\n'
+                                 '- reference_reports: 없음\n', encoding='utf-8')
+        self.write_report('discussion', status='completed')
+        self.write_report('design', status='completed', base='discussion-report.md')
+
+    def write_report(self, stage, number=0, status='in_progress', base=None, body='', directory=None):
+        directory = directory or self.topic
+        directory.mkdir(exist_ok=True)
+        suffix = f'-rev-{number:03d}' if number else ''
+        path = directory / f'{stage}-report{suffix}.md'
+        areas = {area: '' for area in checker.AREAS}
+        if status == 'completed':
+            areas['완료 체크리스트'] = self.batch_checklist()
+        if stage in ('verification', 'qa') and status in ('completed', 'awaiting_approval'):
+            areas['사용자 승인'] = '### 완료 구분\n\nall_passed\n현재 대상의 결과를 확인함.\n'
+        areas['단계 결과'] = body
+        path.write_text(f'---\nstatus: {status}\nbase_on: {base or "null"}\n---\n\n'
+                        '# 작업 결과\n\n' + '\n\n'.join('## ' + a + '\n\n' + b for a, b in areas.items()), encoding='utf-8')
+        return path
+
+    def bundle_plan(self, names=('01-contracts',), design=None):
+        path = design or self.topic / 'design-report.md'
+        self.area(path, '단계 결과',
+                  '### 작업 묶음표\n\n| 묶음 | 범위/완료 기준 | 의존/진입 | 설계 정본 | 디렉토리 | 결과 참조 |\n'
+                  '| --- | --- | --- | --- | --- | --- |\n' +
+                  ''.join(f'| 범위 {n} | 구현과 QA | 구현부터 | 공통 설계 | {n} | 미시작 |\n' for n in names))
+        return path
+
+    def bundle(self, name='01-contracts', detailed=False):
+        directory = self.topic / name
+        directory.mkdir(exist_ok=True)
+        if detailed:
+            self.write_report('design', status='completed', base='../design-report.md', directory=directory)
+        self.write_report('implementation', status='completed', directory=directory,
+                          base='design-report.md' if detailed else '../design-report.md')
+        return directory
+
+    def test_single_flow_and_design_only_review(self):
+        self.write_report('design', status='in_review', base='discussion-report.md')
+        self.assertEqual(self.check()['exit_code'], 0)
+        self.write_report('discussion', status='in_review')
+        self.has(self.check(), 'report.format', 'FAIL')
+
+    def test_shared_and_detailed_bundle_inputs(self):
+        one, two = self.bundle(), self.bundle('02-storage', detailed=True)
+        self.bundle_plan((one.name, two.name))
+        self.assertEqual(self.check()['exit_code'], 0)
+        self.write_report('verification', base='../01-contracts/implementation-report.md', directory=two)
+        self.has(self.check(), 'report.bundle', 'FAIL')
+
+    def test_bundle_design_requires_shared_design(self):
+        directory = self.bundle(detailed=True)
+        self.bundle_plan()
+        self.write_report('design', base='../discussion-report.md', directory=directory)
+        self.has(self.check(), 'report.base', 'FAIL')
+
+    def test_current_implementation_cannot_skip_own_design(self):
+        directory = self.bundle(detailed=True)
+        self.bundle_plan()
+        self.write_report('implementation', base='../design-report.md', directory=directory)
+        self.has(self.check(), 'report.bundle', 'FAIL')
+
+    def test_revisions_stay_in_their_directory_and_stage(self):
+        one, two = self.bundle(), self.bundle('02-storage')
+        self.bundle_plan((one.name, two.name))
+        old = one / 'implementation-report.md'
+        self.change(old, 'status: completed', 'status: superseded')
+        self.write_report('implementation', number=1, base='../design-report.md', directory=one)
+        self.assertEqual(self.check()['exit_code'], 0)
+        self.change(old, 'status: superseded', 'status: completed')
+        self.has(self.check(), 'report.revision', 'FAIL')
+
+    def test_completed_historical_basis_and_live_input_are_distinct(self):
+        directory = self.bundle()
+        old = self.bundle_plan()
+        self.change(old, 'status: completed', 'status: superseded')
+        new = self.write_report('design', number=1, status='completed', base='discussion-report.md')
+        self.bundle_plan(design=new)
+        self.assertEqual(self.check()['exit_code'], 0)
+        path = directory / 'implementation-report.md'
+        self.change(path, 'status: completed', 'status: in_progress')
+        self.has(self.check(), 'report.predecessor', 'FAIL')
+        self.change(path, '../design-report.md', '../design-report-rev-001.md')
+        self.assertEqual(self.check()['exit_code'], 0)
+
+    def test_completed_cannot_use_unapproved_draft(self):
+        self.write_report('design', status='in_progress', base='discussion-report.md')
+        self.write_report('implementation', status='completed', base='design-report.md')
+        self.has(self.check(), 'report.predecessor', 'FAIL')
+
+    def test_unaffected_bundle_keeps_common_hold_basis_during_discussion_regression(self):
+        one, two = self.bundle(), self.bundle('02-storage', detailed=True)
+        common = self.bundle_plan((one.name, two.name))
+        self.change(self.topic / 'discussion-report.md', 'status: completed', 'status: superseded')
+        self.write_report('discussion', number=1, status='awaiting_approval')
+        self.change(common, 'status: completed', 'status: hold')
+        for path in two.glob('*report.md'):
+            self.change(path, 'status: completed', 'status: hold')
+        self.assertEqual(self.check()['exit_code'], 0)
+
+    def test_completed_detailed_bundle_keeps_common_hold_basis(self):
+        self.bundle(detailed=True)
+        self.change(self.bundle_plan(), 'status: completed', 'status: hold')
+        self.assertEqual(self.check()['exit_code'], 0)
+
+    def test_common_hold_cannot_start_or_approve_bundle_work(self):
+        directory = self.bundle()
+        self.change(self.bundle_plan(), 'status: completed', 'status: hold')
+        for status in ('in_progress', 'awaiting_approval'):
+            with self.subTest(status=status):
+                self.write_report('implementation', status=status, base='../design-report.md', directory=directory)
+                self.has(self.check(), 'report.predecessor', 'FAIL')
+        self.write_report('design', status='in_review', base='../design-report.md', directory=directory)
+        self.has(self.check(), 'report.predecessor', 'FAIL')
+
+    def test_completed_report_cannot_keep_same_bundle_hold_basis(self):
+        directory = self.bundle(detailed=True)
+        self.bundle_plan()
+        self.change(directory / 'design-report.md', 'status: completed', 'status: hold')
+        self.has(self.check(), 'report.predecessor', 'FAIL')
+
+    def test_completed_single_flow_cannot_keep_hold_basis(self):
+        self.write_report('design', status='hold', base='discussion-report.md')
+        self.write_report('implementation', status='completed', base='design-report.md')
+        self.has(self.check(), 'report.predecessor', 'FAIL')
+
+    def test_mixed_formats_rejected_without_modification(self):
+        path = self.topic / 'implementation-report-001.md'
+        path.write_text('old report', encoding='utf-8')
+        before = {p: p.read_bytes() for p in self.topic.rglob('*.md')}
+        self.has(self.check(), 'report.format', 'FAIL')
+        self.assertEqual(before, {p: p.read_bytes() for p in self.topic.rglob('*.md')})
+
+    def test_report_base_cannot_escape_topic(self):
+        for base in ('../../design-report.md', '/tmp/design-report.md',
+                     'https://example.test/design-report.md', 'design-report.md#part',
+                     'design-report.md?version=1'):
+            with self.subTest(base=base):
+                self.write_report('implementation', base=base)
+                self.has(self.check(), 'report.format', 'FAIL')
+
+    def test_base_cannot_follow_outside_symlink(self):
+        outside = self.root / 'design-report.md'
+        outside.write_text('outside', encoding='utf-8')
+        (self.topic / 'design-report-rev-001.md').symlink_to(outside)
+        self.write_report('implementation', base='design-report-rev-001.md')
+        self.has(self.check(), 'report.format', 'FAIL')
+
+    def test_nested_design_details_and_review_names(self):
+        directory = self.bundle(detailed=True)
+        self.bundle_plan()
+        detail = directory / 'design-report'
+        detail.mkdir()
+        (detail / 'schema.md').write_text('[missing](absent.md)', encoding='utf-8')
+        self.has(self.check(), 'link.target', 'FAIL')
+        (detail / 'schema.md').write_text('schema', encoding='utf-8')
+        (directory / 'design-report-review-001.md').write_text('review', encoding='utf-8')
+        self.assertEqual(self.check()['exit_code'], 0)
+
+    def test_deferred_is_not_a_stage_report_scope(self):
+        deferred = self.topic / 'deferred'
+        deferred.mkdir()
+        (deferred / 'design-report-001.md').write_text('independent deferred note', encoding='utf-8')
+        self.assertEqual(self.check()['exit_code'], 0)
+
+    def test_bundle_registry_matches_directory_and_result(self):
+        one, two = self.bundle(), self.bundle('02-storage')
+        plan = self.bundle_plan((one.name, two.name))
+        self.change(plan, '| 01-contracts | 미시작 |', '| 01-contracts | [결과](01-contracts/implementation-report.md) |')
+        self.assertEqual(self.check()['exit_code'], 0)
+        self.change(plan, '(01-contracts/implementation-report.md)', '(02-storage/implementation-report.md)')
+        self.has(self.check(), 'bundle.result', 'FAIL')
+        self.bundle_plan(('미시작', two.name))
+        self.has(self.check(), 'bundle.registration', 'FAIL')
+
+    def test_bundle_numbers_cannot_duplicate_but_can_exceed_99(self):
+        one, two = self.bundle('99-contracts'), self.bundle('100-storage')
+        self.bundle_plan((one.name, two.name))
+        self.assertEqual(self.check()['exit_code'], 0)
+        self.bundle('99-other')
+        self.bundle_plan((one.name, two.name, '99-other'))
+        self.has(self.check(), 'bundle.directory', 'FAIL')
+
+    def test_invalid_bundle_directory_does_not_hide_reports(self):
+        directory = self.bundle('1-contracts')
+        self.bundle_plan((directory.name,))
+        self.has(self.check(), 'bundle.directory', 'FAIL')
+
+    def test_future_bundles_need_no_directory(self):
+        self.bundle_plan(('미시작',))
+        self.assertEqual(self.check()['exit_code'], 0)
+
+    def test_topic_symlink_preserves_relative_predecessors(self):
+        alias = self.topic.parent / 'alias'
+        alias.symlink_to(self.topic, target_is_directory=True)
+        self.bundle(detailed=True)
+        self.bundle_plan()
+        result = checker.Checker(alias).run()
+        self.assertEqual(result['exit_code'], 0, result)
+
+    def test_bundled_layout_does_not_mix_root_implementation(self):
+        self.bundle()
+        self.bundle_plan()
+        self.write_report('implementation', base='design-report.md')
+        self.has(self.check(), 'report.bundle', 'FAIL')
+
+    def test_handoff_outcomes_replace_legacy_keywords(self):
+        self.write_report('implementation', status='completed', base='design-report.md')
+        path = self.write_report('verification', status='completed', base='implementation-report.md')
+        self.change(path, 'all_passed', 'handoff')
+        self.assertEqual(self.check()['exit_code'], 0)
+        self.change(path, 'handoff', 'qa_handoff')
+        self.has(self.check(), 'report.completion', 'FAIL')
+        self.change(path, 'qa_handoff', 'all_passed')
+        path = self.write_report('qa', status='completed', base='verification-report.md')
+        self.change(path, 'all_passed', 'next_cycle_handoff')
+        self.has(self.check(), 'report.completion', 'FAIL')
 
 
 if __name__ == '__main__':
