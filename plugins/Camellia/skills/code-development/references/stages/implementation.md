@@ -161,8 +161,8 @@ TDD와 화면 확인 범위는 설계의 [검증과 QA의 대상 구분](design.
 
 ## report 작성과 인계
 
-- [report 템플릿](../../assets/stage_reports/implementation-template.md)으로 `implementation-report-<번호>.md`를 작성한다.
-  저장 위치와 생성/번호/상태 처리는 [공통 report 규칙](../guidelines.md#report-작성과-인계)을 따른다.
+- [report 템플릿](../../assets/stage_reports/implementation-template.md)으로 `implementation-report.md`를 작성한다.
+  저장 위치와 생성/개정/상태 처리는 [공통 report 규칙](../guidelines.md#report-작성과-인계)을 따른다.
 - 템플릿의 단계 결과, 인계 사항, 완료 체크리스트와 사용자 승인 영역에 실제 결과를 기록한다.
   템플릿 원본은 유지하고 실제 report의 제목과 자료 참조를 작업에 맞게 작성한다.
 - 변경 대상은 저장소 이름, 저장소 내 상대 디렉토리 또는 서브모듈 단위로 요약한다.
@@ -170,7 +170,7 @@ TDD와 화면 확인 범위는 설계의 [검증과 QA의 대상 구분](design.
 - 코드와 테스트, 실행 방법과 환경 및 데이터, 기대 결과와 판정 기준의 참조, 남은 사항을 검증 단계에 인계한다.
 - 아직 시작하지 않은 verification report와 qa report는 미리 생성하지 않는다.
 
-## 완료 확인과 이관
+## 완료 확인과 인계
 
 구현 결과와 상세 TDD 수행 근거, 적용하기로 한 통합/E2E의 작성 및 실행 준비 상태를 제출한다.
 통합 테스트와 E2E의 통과 여부는 구현 단계의 완료 조건으로 삼지 않는다.
