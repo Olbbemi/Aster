@@ -36,7 +36,7 @@ python3 -B tools/scripts/validation/check_lifecycle_specification.py --check-sta
 
 | 대상 | 확인하는 형식 | 근거 |
 | --- | --- | --- |
-| 명세서 프론트매터 | YAML 매핑, 네 필드의 누락/추가, 값 타입과 operation/current_stage 허용값 | [프론트매터](../../.agents/skills/skill-lifecycle/references/specification.md#프론트매터) |
+| 명세서 프론트매터 | YAML 매핑, 다섯 필드의 누락/추가, 값 타입과 operation/current_stage 허용값, in_review boolean | [프론트매터](../../.agents/skills/skill-lifecycle/references/specification.md#프론트매터) |
 | 명세서 본문 | 문서 제목, 단계 식별자/한글 제목과 순서, 공통 및 단계별 기록 제목의 누락/중복 | [전체 구성](../../.agents/skills/skill-lifecycle/references/specification.md#명세서의-전체-구성), [템플릿](../../.agents/skills/skill-lifecycle/references/specification.md#명세서-템플릿) |
 | 템플릿 | 단계 순서와 단계별 기록 제목/순서의 대응 | [생명 주기 순서](../../.agents/skills/skill-lifecycle/references/lifecycle.md#생명-주기-순서)와 각 단계 문서의 명세서 기록 항목 |
 | 단계 문서 (`--check-stages`) | 단계 목록과 파일/문서 제목 대응, 공통 구역과 운영 항목의 누락/중복/순서/제목 단계 | [단계 정의 공통 항목](../../.agents/skills/skill-lifecycle/references/lifecycle.md#단계-정의-공통-항목) |
@@ -71,8 +71,12 @@ JSON에는 검사 범위, 대상과 기준 디렉토리, 항목별 판정/근거
 - 입력 명세서, 기준 문서와 템플릿 및 상태 필드는 수정하지 않는다.
 
 - `name`과 `target_path`의 `null`은 형식으로 허용한다.
-  - 신규 초기 작업인지, 이미 확정된 값을 되돌린 것인지와 요건 정의 완료 여부는 별도 의미 검토다.
+  - 기존 초기 명세서의 미정값인지, 새 명세서가 경로 확정 후 작성되었는지,
+    이미 확정된 값을 되돌린 것인지와 요건 정의 완료 여부는 별도 의미 검토다.
 - 실제 이름/경로의 일치, 승인, 필수 조건의 충족과 `current_stage`의 타당성을 자동 판정하지 않는다.
+- `in_review`가 없는 기존 명세서는 누락으로 보고하고 자동 수정하지 않는다.
+  재개할 때의 상태 확인과 갱신은 명세서 규격을 따른다.
+- `in_review`의 boolean 형식만 검사하며 실제 검토, 커밋과 관문 통과 여부는 자동 판정하지 않는다.
 - 검사 통과는 스킬의 완료 판정이나 다음 단계 진입 승인이 아니다.
 - 단계 문서 검사도 본문 내용의 충분성이나 단계 이동 조건의 타당성을 판정하지 않는다.
 

@@ -20,7 +20,7 @@ STAGE_STRUCTURE = ".agents/skills/skill-lifecycle/references/lifecycle.md#단계
 STAGE_SECTIONS = ("단계 운영 규칙", "명세서 기록 항목")
 COMMON = ("진입 조건 확인", "완료 조건 확인", "단계 이동 기록")
 OPERATIONS = {"create", "update", "integrate", "deprecate"}
-FIELDS = {"name", "target_path", "operation", "current_stage"}
+FIELDS = {"name", "target_path", "operation", "current_stage", "in_review"}
 
 
 def headings(tokens):
@@ -184,6 +184,7 @@ def check_lifecycle_specification(specification=None, *, check_template=False,
                     checks=checks,
                     limits=["표준 형식의 구조만 검사하며 승인, 요건 충족과 실제 완료를 판정하지 않습니다.",
                             "name/target_path의 null 허용 조건과 실제 작업 대상은 별도 확인합니다.",
+                            "in_review 값은 실제 검토와 커밋 수행 여부를 증명하지 않습니다.",
                             "본문 내용과 링크, 자체 수정용 축약 명세서는 검사 범위 밖입니다."]
                     + (["단계 문서의 본문 충분성과 전이 조건의 타당성은 별도 검토합니다."]
                        if check_stages else []))
@@ -279,6 +280,10 @@ def check_lifecycle_specification(specification=None, *, check_template=False,
         if field not in data:
             continue
         value = data[field]
+        if field == "in_review":
+            add("in_review.type", "PASS" if type(value) is bool else "FAIL",
+                "in_review: YAML boolean 형식이어야 합니다.", target, basis=SPEC + "#프론트매터")
+            continue
         nullable = field in ("name", "target_path")
         valid = (nullable and value is None) or (isinstance(value, str) and bool(value.strip()))
         add(f"{field}.type", "PASS" if valid else "FAIL",

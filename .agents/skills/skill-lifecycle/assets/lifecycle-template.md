@@ -1,19 +1,26 @@
 ---
-name: null
-target_path: null
+name: "<skill-name>"
+target_path: "<확정한 소스 경로>"
 operation: "<create|update|integrate|deprecate>"
 current_stage: problem-definition
+in_review: false
 ---
 
-# <작업 주제> 생명 주기 명세서
+# <해결할 문제와 변경 결과>
 
-<!-- 제목과 operation의 자리표시자는 실제 작업에 맞게 바꾼다.
-name과 target_path의 미정값은 references/specification.md의 프론트매터 기준에 따라 처리한다. -->
+<!-- 사용 형태와 이름 및 경로를 확정한 뒤 기록 루트에서 이 템플릿으로 명세서를 작성한다.
+제목, name, target_path와 operation의 자리표시자는 실제 작업에 맞게 바꾼다.
+경로와 필드의 기준은 references/work-data.md 및 references/specification.md를 따른다. -->
+<!-- in_review의 적용 시점과 검토 기록은 references/commit-review.md를 따른다. -->
 <!-- current_stage는 references/lifecycle.md의 최초 기록의 단계 판단에 따라 정한다.
 단계 이동 기록에는 최초 상태 산정과 실제 이후 전이를 구분한다. -->
 <!-- 작성 기준: skill-lifecycle 스킬 디렉토리의 references/specification.md, references/lifecycle.md 및 references/stages/<단계 식별자>.md. -->
 <!-- 현재 단계 밖의 선행 논의도 기록하며 내용의 기록 상태와 단계 진입/완료 판단을 구분한다.
 배치와 저장 후 대조는 skill-lifecycle 스킬 디렉토리의 references/specification.md에 있는 "단계별 본문 기록 기준"과 "명세서 작성 시 확인할 사항"을 따른다. -->
+
+<!-- 각 단계의 필수 항목은 유지하되 별도 파일의 생성 여부는 references/work-data.md를 따른다.
+상세 정본을 연결해도 목적, 핵심 결정, 실제 결과와 미확인은 이 명세서에서 이해할 수 있게 적는다.
+history 및 단계별 검증 문서를 일괄 생성하지 않는다. -->
 
 ## problem-definition (문제 정의)
 
@@ -268,6 +275,8 @@ name과 target_path의 미정값은 references/specification.md의 프론트매�
 | --- | --- | --- |
 | | | |
 
+### 호환성 검증 전 커밋 검토
+
 ### 교차 검증의 수행 여부와 판단 근거
 
 ### 교차 검증 대상과 검증에 포함한 파일 및 변경 내용
@@ -342,6 +351,8 @@ name과 target_path의 미정값은 references/specification.md의 프론트매�
 | 조건 | 확인 결과 | 판단 근거와 자료 위치 |
 | --- | --- | --- |
 | | | |
+
+### 최종 커밋 검토
 
 ### 생명 주기의 완료 여부에 대한 판단
 
