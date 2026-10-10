@@ -1,6 +1,6 @@
 ---
-status: active
-in_review: true
+status: completed
+in_review: false
 name: skill-lifecycle
 target_path: .agents/skills/skill-lifecycle/
 operation: update
@@ -144,16 +144,21 @@ records/internal/skill-lifecycle/fixed-paths-and-final-format/specification.md
 제외 대상은 Git에서 제외되는 공용 로컬 검사 출력과 후속 논의 todo다.
 이번 작업 외의 기존 todo와 다른 작업 자료는 변경하거나 커밋하지 않는다.
 
-### 검토 결과와 남은 작업
+### 검토 결과와 완료 판단
 
 구현과 위 검증을 마쳤다.
 명세의 각 요건과 실제 지침 및 검사기를 대조했다.
 변경된 Markdown 23개를 CommonMark/표 파서로 확인했으며 의도하지 않은 들여쓰기 코드 블록은 없었다.
 공통 검토 절차와 이 명세서는 렌더러의 HTML도 원문과 대조하여 문단, 목록과 표의 구분을 확인했다.
-완료 기록 참조 검사는 PASS 13, 종료 0이며, 미추적 보존 대상은 새 공통 검토 문서와 이 명세서 두 파일이다.
+커밋 전 완료 기록 참조 검사는 PASS 13, 종료 0이었다.
+당시 미추적 보존 대상이었던 새 공통 검토 문서와 이 명세서도 G1 커밋에 포함했다.
 `git diff --check`는 출력 없이 종료 0이다.
-커밋 대상을 승인받았으며 그룹과 마감 기록의 커밋이 끝날 때까지 `in_review: true`를 유지한다.
-G1 변경을 커밋하고 결과 및 최종 상태를 검토하여 마감 커밋한다.
+
+승인된 25개 파일과 실제 스테이징 대상을 대조한 뒤
+G1을 `ad75819` (Define lifecycle artifact paths and commit review gates)로 커밋했다.
+합의한 구현과 정적 검증 범위를 충족했으며 이번 개선의 남은 구현 작업은 없다.
+이 명세서의 승인, 커밋 근거와 완료 상태를 대조하여 `in_review: false`로 마감한다.
+마감 커밋은 이 파일의 Git 이력으로 확인하며 자신의 해시를 본문에 반복 기록하지 않는다.
 푸시는 이번 요청 범위에 포함하지 않는다.
 
 ## 후속 논의
