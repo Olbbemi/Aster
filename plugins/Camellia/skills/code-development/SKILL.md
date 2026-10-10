@@ -43,7 +43,8 @@ Codex와 Claude에서 같은 절차를 사용하며 실행 도구의 차이는 �
 
 3. workflow에서 연결한 현재 단계 지침과 작업 조건에 해당하는 상세 지침을 읽고 수행한다.
    실제 적용할 단계 목록과 순서는 대주제 manifest의 해당 작업 항목에 기록된 `stages`로 확인한다.
-   큰 설계와 순차 묶음은 [작업 묶음 지침](references/work-bundles.md)에 따라 공통 뼈대와 현재 묶음 범위를 확인한다.
+   논의에서 큰 작업 묶음이 보이면 [작업 묶음 지침](references/work-bundles.md)에 따라 후보를 잡고,
+   설계에서는 공통 뼈대와 현재 묶음의 상세를 구분한다.
    첫 저장 전 신규 작업은 합의한 시작 단계를 따른다.
 
 4. 연결된 템플릿으로 [저장 시점](references/guidelines.md#report-저장-시점)에 누적 내용을 report에 반영한다.
@@ -72,7 +73,7 @@ Codex와 Claude에서 같은 절차를 사용하며 실행 도구의 차이는 �
 | [references/workflow.md](references/workflow.md) | 시작/재개 시 진행 흐름과 필요한 지침의 연결을 읽는다. 기본 단계 목록은 이 문서에서 관리한다. |
 | [references/guidelines.md](references/guidelines.md) | 공통 적용과 자료 사용 기준을 확인하고, 주제 선택/기록/승인/회귀 등 현재 작업에 해당하는 절을 읽는다. |
 | [references/design-artifacts.md](references/design-artifacts.md) | 설계 뼈대 기록과 최종 제출 전 구현용 정의, 그룹별 상세와 도식 표시 확인을 수행한다. |
-| [references/work-bundles.md](references/work-bundles.md) | 큰 설계의 뼈대/분할 판단과 같은 주제의 순차 묶음 진입/회귀/전체 완료를 확인한다. |
+| [references/work-bundles.md](references/work-bundles.md) | 논의의 번들 후보와 질문 범위, 설계의 뼈대/분할 판단 및 순차 묶음의 진입/회귀/전체 완료를 확인한다. |
 | [references/deferred-work.md](references/deferred-work.md) | 플로우 밖 보류를 합의하거나 전체 완료 전 항목을 이동/정리할 때 읽는다. |
 | [references/legacy-records.md](references/legacy-records.md) | 기존 번호 형식을 조회/재개하거나 요청받은 전환을 수행할 때 읽는다. |
 | [references/report-checks.md](references/report-checks.md) | 저장한 결과의 최종 검토/승인 전이나 재개/다음 단계의 기존 report를 사용할 때 읽기 전용 검사 방법과 판정 범위를 확인한다. |
