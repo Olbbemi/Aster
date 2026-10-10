@@ -15,7 +15,7 @@
 | [.github/](.github) | Git 운영 규칙, PR과 GitHub 자동화 |
 | [assets/](assets/) | 일반 작업과 내부 스킬의 공용 기본 양식 |
 | `data/` | Git에서 제외하는 진행 중 자료와 로컬 기록. 공용 경로로 접근 |
-| [records/](records/) | 완료 시 선별/정리하여 Git에 보존할 작업 기록 |
+| [records/](records/) | 명세서와 설계 및 검증 근거 등 Git에 보존할 작업 기록 |
 | [plugins/](plugins) | 배포할 플러그인의 소스와 실행 자료 |
 | [shared/](shared/) | 내부 스킬과 설치된 플러그인이 함께 참조하는 공용 자료 |
 | [standards/](standards) | 구성 요소의 개발 규격과 저장소 배치 기준 |
