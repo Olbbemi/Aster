@@ -1,6 +1,6 @@
 ---
-status: active
-in_review: true
+status: completed
+in_review: false
 name: skill-lifecycle
 target_path: .agents/skills/skill-lifecycle/
 operation: update
@@ -84,7 +84,7 @@ operation: update
 | 단계와 템플릿 | `check_lifecycle_specification.py --check-stages --check-template --json` | PASS 43, 종료 0 |
 | 스킬 참조 | `check_references.py .agents/skills/skill-lifecycle --json` | 19개 문서, PASS 247, 종료 0 |
 | 공용 규격 참조 | 같은 참조 검사기에 `standards/` 지정 | PASS 38, 외부 URL SKIP 1, 종료 0 |
-| 작업 명세서의 보존 참조 | 같은 참조 검사기에 이 기록 디렉토리와 `--completion-report` 지정 | PASS 7, 종료 0. 새 명세서의 커밋 필요 상태 확인 |
+| 작업 명세서의 보존 참조 | 같은 참조 검사기에 이 기록 디렉토리와 `--completion-report` 지정 | PASS 7, 종료 0. 최초 검사에서 확인한 미추적 명세서를 G1 커밋에 포함 |
 | 형식 변경 전후 대조 | 정책 반영 후 형식 정리 전 사본과 최종 파일의 CommonMark/표 토큰 비교 | 19개 일치. 본문과 링크, 코드, 목록/표 계층 및 프론트매터 보존 |
 | 들여쓰기와 렌더링 | 스킬 19개 문서의 파싱과 HTML 생성, 변경한 문단 및 목록과 원문 대조 | 의도하지 않은 들여쓰기 코드 블록 없음. 열거와 인용 항목명의 어색한 개행을 재정리 |
 | 공백 | `git diff --check` | 출력 없음, 종료 0 |
@@ -141,7 +141,9 @@ records/internal/skill-lifecycle/supporting-records-and-readability/specificatio
 제외 대상은 Git에서 제외되는 로컬 형식 대조 사본과 검사 출력 및 후속 todo다.
 다른 작업의 자료와 기존 보존 기록은 포함하지 않는다.
 
-구현과 정적 대조 및 커밋 대상 승인을 마쳤다.
-승인 후 변경과 그룹 구성을 다시 확인했으며 동일 문서의 정책/형식 변경을 함께 검토하는 G1을 유지한다.
-`in_review: true`를 유지하고 G1 커밋을 확인한 뒤 별도 마감 커밋으로 결과와 상태를 확정한다.
-이후 같은 작업 브랜치에 푸시하고 `integrate/common` 대상 Draft PR을 생성한다.
+G1은 `7270670`으로 커밋했다.
+승인한 21개 파일과 실제 스테이징 목록이 일치하며, 검토한 작업 파일과 커밋 내용이 같음을 확인했다.
+승인 후 변경과 그룹 구성을 다시 확인했으며 동일 문서의 정책/형식 변경을 함께 검토하는 G1을 유지했다.
+구현과 정적 검증 및 그룹 커밋을 마쳐 `status: completed`, `in_review: false`로 마감한다.
+이 상태 갱신만 별도 마감 커밋으로 보존하며 자체 해시는 Git 이력에서 확인한다.
+푸시와 `integrate/common` 대상 Draft PR 생성은 승인된 후속 Git 작업이며 실제 결과는 원격과 PR에서 확인한다.
