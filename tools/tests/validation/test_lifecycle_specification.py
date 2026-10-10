@@ -52,6 +52,7 @@ name: sample-skill
 target_path: .agents/skills/sample-skill
 operation: create
 current_stage: problem-definition
+in_review: false
 ---
 """
 
@@ -102,6 +103,26 @@ class LifecycleSpecificationTests(unittest.TestCase):
                 text = text.replace("target_path: .agents/skills/sample-skill", "target_path: null")
                 text = text.replace("operation: create", "operation: " + operation)
                 self.assertEqual(self.check(text + BODY)["exit_code"], 0)
+
+    def test_review_boolean_and_invalid_types(self):
+        for value in ("true", "false"):
+            with self.subTest(value=value):
+                result = self.check(META.replace("in_review: false", "in_review: " + value) + BODY)
+                self.assertEqual(result["exit_code"], 0)
+        for value in ('"true"', '"false"', "0", "1", "null", "[]", "{}", '""'):
+            with self.subTest(value=value):
+                self.issue(self.check(META.replace("in_review: false", "in_review: " + value) + BODY),
+                           "in_review.type")
+        self.issue(self.check(META.replace("in_review: false", "in_review: true\nin_review: false") + BODY),
+                   "frontmatter.yaml")
+
+    def test_legacy_missing_review_is_reported_without_rewrite(self):
+        self.spec.write_text(META.replace("in_review: false\n", "") + BODY, encoding="utf-8")
+        before = self.snapshot()
+        result = self.cli(self.spec, "--lifecycle-directory", self.rules, "--json")
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.issue(json.loads(result.stdout), "frontmatter.fields")
+        self.assertEqual(self.snapshot(), before)
 
     def test_format_pass_does_not_establish_approval_or_completion(self):
         text = (META.replace("current_stage: problem-definition", "current_stage: completed")
