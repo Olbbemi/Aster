@@ -9,7 +9,7 @@ todo와 로컬 작업 자료는 대표 작업 트리의 `data/todo/`와 `data/ca
 공용 접근 경로 `~/.local/share/aster/`는 그 `data/`를 가리키는 심볼릭 링크다.
 
 Git에 보존할 기록은 저장소의 `records/`에 둔다.
-`skill-lifecycle`의 새 명세서와 부가 문서는 [전용 작업 자료 규격](../.agents/skills/skill-lifecycle/references/work-data.md)에 따라
+`skill-lifecycle`의 새 명세서와 부가 문서는 [전용 작업 자료 규격](../.agents/skills/skill-lifecycle/references/records/work-data.md)에 따라
 경로를 확정한 뒤 초안부터 `records/`에서 작성한다.
 
 clone 별칭과 추가 worktree마다 자료를 나누지 않으며, 현재 링크의 대상을 사용한다.
@@ -129,7 +129,7 @@ data/
 
 스킬 전용 단계, 파일 형식과 추가 산출물은 해당 스킬의 규격을 따른다.
 `skill-lifecycle`의 소스와 기록 경로 확정, 단일 명세서와 필요한 부가 문서 및 로컬 자료 배치는
-[전용 작업 자료 규격](../.agents/skills/skill-lifecycle/references/work-data.md)에 정의한다.
+[전용 작업 자료 규격](../.agents/skills/skill-lifecycle/references/records/work-data.md)에 정의한다.
 새 내부 스킬은 실제 필요한 기록만 자체 절차에서 정의하며, 공용 기준을 다시 복제하지 않는다.
 
 ### 기록 관리
