@@ -7,8 +7,10 @@
     {
       "name": "camellia",
       "source": {
-        "source": "local",
-        "path": "./plugins/Camellia"
+        "source": "git-subdir",
+        "url": "https://github.com/Olbbemi/Aster.git",
+        "path": "plugins/Camellia",
+        "ref": "integrate/camellia"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -19,8 +21,10 @@
     {
       "name": "syringa",
       "source": {
-        "source": "local",
-        "path": "./plugins/Syringa"
+        "source": "git-subdir",
+        "url": "https://github.com/Olbbemi/Aster.git",
+        "path": "plugins/Syringa",
+        "ref": "integrate/syringa"
       },
       "policy": {
         "installation": "AVAILABLE",
