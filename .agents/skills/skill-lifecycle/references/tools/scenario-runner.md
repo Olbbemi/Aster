@@ -1,13 +1,14 @@
-# Aster 시나리오 공통 실행기
+# skill-lifecycle 시나리오 실행기
 
-이 문서는 `scenario_runner.py`의 사용 계약, 실행 방법과 검증 절차를 정의한다.
-배치 기준은 [저장소 배치 규격](../../standards/repository-layout.md#저장소-공용-실행-도구)을 따른다.
+이 문서는 skill-lifecycle에서 사용하는 [scenario_runner.py](../../scripts/scenario_runner.py)의 사용 계약과 실행 방법을 정의한다.
+배치 기준은 [스킬 내부 배치 규격](../../../../../standards/skills/skill-layout.md)을 따른다.
 
 ## 목적과 역할
 
 `scenario_runner.py`는 승인된 시험의 요청 한 건을 별도 Codex CLI에 전달하고 실행 근거를
 회수한다.
 시나리오마다 Python 하네스를 만들지 않고 같은 실행 명령을 재사용한다.
+적용 시점과 판정 역할은 [시나리오 실행과 역할](../procedures/scenario-validation.md#실행과-역할)을 따른다.
 
 - Linux, Python 3.11 이상과 현재 확인한 Codex CLI 0.154.0을 대상으로 한다.
 - Claude 실행기는 구현하지 않았다.
@@ -31,7 +32,7 @@
 - 공유 데이터의 심볼릭 링크 별칭은 실제 경로로 대조한다.
 - 설정에 남은 존재하지 않는 다른 쓰기 루트는 허용 후보에서 제외한다.
   시험 경로는 실제로 존재하는 명시적 쓰기 루트 아래여야 하며, 사용할 수 있는 루트가 없으면 차단한다.
-- 디렉토리의 생성과 자료 배치는 [공유 작업 데이터 접근](../../AGENTS.md#공유-작업-데이터-접근)을 따른다.
+- 디렉토리의 생성과 자료 배치는 [공유 작업 데이터 접근](../../../../../AGENTS.md#공유-작업-데이터-접근)을 따른다.
 
 | 경로 | 역할 |
 | --- | --- |
@@ -61,13 +62,11 @@
 ## 호출
 
 아래 `CASE_PATH`는 위 계약에 따라 준비한 실제 절대 경로로 바꾼다.
-호출은 Aster에서 아래 명령 형태 그대로 실행한다.
-앞에 셸 래퍼나 환경 변수 설정을 붙이거나
-Python 경로/옵션 순서를 바꾸면 실행 허용 규칙과 일치하지 않을 수 있다.
+호출은 Aster에서 아래 명령으로 실행한다.
 
 ```bash
-/usr/bin/python3 -I /home/olbbemi/Project/Aster/tools/scripts/scenario/scenario_runner.py run --case CASE_PATH --step 01-entry
-/usr/bin/python3 -I /home/olbbemi/Project/Aster/tools/scripts/scenario/scenario_runner.py run --case CASE_PATH --step 02-followup
+/usr/bin/python3 -I /home/olbbemi/Project/Aster/.agents/skills/skill-lifecycle/scripts/scenario_runner.py run --case CASE_PATH --step 01-entry
+/usr/bin/python3 -I /home/olbbemi/Project/Aster/.agents/skills/skill-lifecycle/scripts/scenario_runner.py run --case CASE_PATH --step 02-followup
 ```
 
 - 최초 실행은 `codex exec`, 이후는 같은 case의 `session.json`에 저장된 ID로
@@ -89,24 +88,14 @@ Python 경로/옵션 순서를 바꾸면 실행 허용 규칙과 일치하지 �
 - 불완전한 case의 기록을 삭제하여 성공한 것처럼 이어가지 않고,
   재시험이 필요하면 기존 실패 근거를 유지한 새 case를 준비한다.
   이는 복구와 판정 중의 보존 기준이며 원시 자료의 영구 보존을 요구하지 않는다.
-  사용을 마친 뒤의 정리는 호출 측 작업 절차를 따르며, skill-lifecycle 시험은
-  [시험 정리 절차](../../.agents/skills/skill-lifecycle/references/scenario-validation.md#시험-생성물과-임시-기록-정리)를 따른다.
+  사용을 마친 뒤에는
+  [시험 정리 절차](../procedures/scenario-validation.md#시험-생성물과-임시-기록-정리)를 따른다.
 
 ## 실행 권한
 
-프로젝트 `.codex/rules/scenario-runner.rules`는 다음 명령 prefix 하나만 허용한다.
-
-```text
-/usr/bin/python3 -I /home/olbbemi/Project/Aster/tools/scripts/scenario/scenario_runner.py run
-```
-
-규칙은 신뢰된 Aster 프로젝트를 로드하는 Codex를 새로 시작한 뒤 적용된다.
-이는 해당 실행기를 샌드박스 밖에서 실행하도록 미리 허용하는 규칙이다.
-
-- 전역 설정, Python 전체 또는 `/tmp` 전체를 허용하지 않는다.
-- 상위 세션이 샌드박스 밖 실행을 요청할 때 이 prefix가 이미 허용되어 있으면 별도 승인 질문을 생략할 수 있다.
-- 더 제한적인 관리 정책이나 일치하는 prompt/forbidden 규칙은 우선한다.
-- 현재 세션에서 파일을 작성했다는 사실만으로 규칙이 소급 적용됐다고 판단하지 않는다.
+실행 권한은 상위 세션에 적용되는 샌드박스와 승인 정책을 따른다.
+샌드박스 밖 실행이 필요하면 해당 정책에 따라 승인을 요청하며,
+권한을 얻을 수 없으면 실행하지 않고 이유를 보고한다.
 
 실행기 자체는 사용자 권한으로 고정 경로의 Codex CLI를 시작한다.
 CLI 초기화/인증/세션 저장은 Codex가 관리한다.
@@ -134,36 +123,6 @@ CLI 초기화/인증/세션 저장은 Codex가 관리한다.
 
 - 임의 Python 파일을 받는 우회 실행 기능은 없다.
 - Python은 `-I`로 시작해 작업 디렉토리의 모듈이나 `PYTHONPATH`를 자동으로 import하지 않는다.
-- 규칙은 파일 내용의 해시를 고정하지 않으므로 실행기를 수정할 때도 이 권한 계약과 검사를 유지한다.
 
 공식 근거: [Codex Rules](https://learn.chatgpt.com/docs/agent-configuration/rules).
 현재 CLI의 옵션은 `codex exec --help`, `codex exec resume --help`로 확인한다.
-
-## 검사와 신규 세션 시험
-
-```bash
-python3 -I -B -m unittest discover -s tools/tests/scenario -v
-codex execpolicy check --pretty --rules .codex/rules/scenario-runner.rules -- /usr/bin/python3 -I /home/olbbemi/Project/Aster/tools/scripts/scenario/scenario_runner.py run --case CASE_PATH --step 01-entry
-```
-
-자동 검사는 임시 디렉토리의 가짜 CLI로 전달/재개, 권한 인자, 경로 제한, 덮어쓰기 차단,
-동시 실행 차단, 실패/불완전/세션 불일치/시간 초과를 확인한다.
-
-- 실제 모델 호출은 포함하지 않는다.
-- 가짜 CLI와 시험 파일은 테스트가 끝나면 삭제한다.
-
-새 Aster 세션에서 실제 적용을 다음 순서로 확인한다.
-
-1. 현재 설정에서 허용한 작업 루트 아래에 기존 시험과 겹치지 않는 `runner-smoke-<고유값>` case를 준비한다.
-2. `project/`와 `inputs/`를 만들고 첫 입력은 프로젝트에 `runner-probe.txt`를 만들고 `FIRST_OK`를 쓰도록 요청한다.
-   다른 파일 변경과 스킬 시나리오는 요청하지 않는다.
-3. 공통 실행기로 첫 요청을 전달한 뒤 실제 파일 내용, 로그 및 성공한 세션 ID를 대조한다.
-4. 둘째 입력은 같은 파일을 읽고 `SECOND_OK`를 한 줄 추가하도록 요청한다.
-   같은 공통 명령으로 전달하고 동일한 세션 ID와 두 줄 내용을 확인한다.
-5. 두 실행에서 승인 창이 나타났는지 기록한다.
-   승인 창이 나오면 승인하여 무개입 성공으로 처리하지 말고, 표시 명령과 적용 규칙/관리 정책을 확인한다.
-6. 결과는 해당 case에 기록하고 종료한다.
-   기존 시나리오나 다른 시나리오를 자동으로 시작하지 않는다.
-
-- 모델이 도구 호출 없이 결과를 주장한 경우 실제 파일이 없으면 실패다.
-- 실제 무승인 시험 전에는 구현/가짜 CLI 검사/규칙 매칭만 확인한 상태로 보고한다.

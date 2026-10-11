@@ -1,11 +1,11 @@
 # check_scenario_records.py
 
-[공통 가이드라인](../guidelines.md)에 따라 요건/계획/현재 결과의 대응을 확인할 때 읽는다.
-[검사 코드](../scripts/validation/check_scenario_records.py)는 입력을 읽기만 하며 시나리오를 실행하지 않는다.
+[공통 가이드라인](checks.md)에 따라 요건/계획/현재 결과의 대응을 확인할 때 읽는다.
+[검사 코드](../../scripts/check_scenario_records.py)는 입력을 읽기만 하며 시나리오를 실행하지 않는다.
 
 ## 적용 대상과 입력
 
-[시나리오 기록 대조 형식](../../standards/skills/scenario-records.md)의 표시와 열을 가진 Markdown 표를 검사한다.
+[시나리오 기록 대조 형식](../../../../../standards/skills/scenario-records.md)의 표시와 열을 가진 Markdown 표를 검사한다.
 
 - 명세서 또는 연결된 정본 문서의 실제 경로를 전달한다.
 - 한 호출에는 한 시나리오 묶음의 요건/계획과 필요한 결과 표만 포함한다.
@@ -25,8 +25,8 @@ markdown-it-py가 필요하며 Python과 의존성 범위는 공통 가이드라
 세 표가 한 문서에 있으면 그 파일만 전달한다.
 
 ```bash
-python3 -B tools/scripts/validation/check_scenario_records.py /absolute/path/plan.md --phase plan --json
-python3 -B tools/scripts/validation/check_scenario_records.py /absolute/path/plan.md /absolute/path/results.md --phase results --json
+python3 -B .agents/skills/skill-lifecycle/scripts/check_scenario_records.py /absolute/path/plan.md --phase plan --json
+python3 -B .agents/skills/skill-lifecycle/scripts/check_scenario_records.py /absolute/path/plan.md /absolute/path/results.md --phase results --json
 ```
 
 - `plan`은 결과 표가 없어도 실행하며 결과 표의 내용을 검사하지 않는다.

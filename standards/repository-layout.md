@@ -117,7 +117,7 @@ main 변경 전파의 실행 안내는 `tools/references/main-propagation.md`에
 
 ### `tools/`
 
-검사기, Git 자동화와 시나리오 실행기 등 Aster 저장소에서 사용하는 공용 실행 도구를 둔다.
+Git 자동화 등 Aster 저장소의 운영 도구와 개발용 테스트를 둔다.
 내부 스킬, 에이전트와 GitHub Actions가 같은 도구를 사용할 수 있다.
 
 배포 플러그인이 실행에 필요한 파일을 이 영역에 의존하도록 구성하지 않는다.
@@ -128,29 +128,28 @@ Git 운영 도구의 공통 배치는 전역 공통 지침의 "Git 훅 진입점
 
 | 경로 | 역할 |
 | --- | --- |
-| `tools/scripts/validation/` | 스킬 구조, 작업 기록/도식 형식과 참조, 배포 구성 검사 |
 | `tools/scripts/git/` | `post-checkout`, `pre-push` 훅 진입점 |
 | `tools/scripts/git/operations/` | 공유 작업 데이터 준비, 플러그인 버전 검사와 브랜치 자동 전파 구현 |
-| `tools/scripts/scenario/` | 승인된 시나리오 실행 |
-| `tools/tests/<기능>/` | `scripts/`의 `validation`, `git`, `scenario`에 대응하는 테스트 |
-| `tools/references/` | 용도별 파일로 관리하는 도구 사용 안내 |
-| `tools/guidelines.md` | 내부 스킬의 공용 검사 실행 지침 |
-| `tools/mappings.md` | 내부 스킬별로 사용할 검사기와 개별 안내의 연결 |
-| `tools/requirements.txt` | 공용 도구의 외부 Python 의존성 |
+| `tools/tests/git/` | Git 운영 도구의 개발용 테스트 |
+| `tools/tests/skills/<스킬명>/` | 해당 스킬의 개발용 테스트 |
+| `tools/references/` | 용도별 파일로 관리하는 도구 사용 안내와 개발용 테스트 안내 |
+| `tools/requirements.txt` | 저장소 도구와 개발용 테스트의 외부 Python 의존성 |
 
 - Git 운영 구현은 위 `operations/` 배치를 따른다.
-  그 밖의 기능별 디렉토리 아래에는 파일을 직접 둔다.
-- 기능별 디렉토리 안에 다시 `scripts/`, `tests/`, `references/`를 만들지 않는다.
-- 호출 주체나 개별 스킬 이름으로 디렉토리를 세분화하지 않는다.
+- Git 운영 테스트는 `tools/tests/git/` 바로 아래에 파일을 둔다.
+- 스킬 개발용 테스트는 내부용과 플러그인 배포용을 구분하지 않고 `tools/tests/skills/<스킬명>/`에 모은다.
+  플러그인 이름으로 중간 디렉토리를 나누지 않는다.
+- 스킬명 디렉토리 바로 아래에 테스트 파일을 두며, 그 아래에 추가 디렉토리를 만들지 않는다.
+- 테스트 스크립트의 파일명은 검증 대상 기능을 명확하게 나타내도록 정한다.
 - 필요한 파일이 생길 때만 디렉토리를 만든다.
 
-`mappings.md`에는 해당 내부 스킬이 사용하는 검사기만 등록한다.
-같은 영역에 있다는 이유로 시나리오 실행기나 Git 자동화까지 스킬의 검사 대상으로 포함하지 않는다.
+스킬 실행에 필요한 스크립트와 안내는 [스킬 구조 규격](skills/skill-layout.md)에 따라 해당 스킬 안에 둔다.
+skill-lifecycle의 검사기와 시나리오 실행기도 이 배치를 따르며,
+skill-lifecycle 자체의 개발용 검사는 `tools/tests/skills/skill-lifecycle/`에 둔다.
 
 개별 안내에는 목적, 적용 범위, 입력과 실행 방법, 출력 해석, 실패 처리와 한계를 적고
 규칙의 정본을 참조한다.
 루트 `README.md`에서 필요한 안내로 연결한다.
-시나리오 공통 실행기의 사용 계약은 `tools/references/scenario-runner.md`에 둔다.
 
 일회성 하네스, 실제 시험 입력/결과와 작업 기록은 이 영역에 두지 않는다.
 이러한 자료는 [공유 작업 데이터 접근](../AGENTS.md#공유-작업-데이터-접근)에 따라 확인한 규격에 맞게 저장한다.
@@ -195,13 +194,12 @@ marketplace 목록을 읽는 참조와 개별 플러그인 코드를 읽는 참�
 목록 변경은 공용 Git 흐름에서 검토하고, 플러그인 코드는 각 관리 대상의 흐름을 따른다.
 일반적인 main 변경 전파는 [Git 운영 규칙](../.github/git-workflow.md)에 따라 별도로 유지한다.
 
-검사기는 명세에서 정한 기대 소스와 파일 목록을 실제 catalog 및 지정한 원격 branch 커밋과 대조한다.
+배포 검증에서는 명세에서 정한 기대 소스와 파일 목록을 실제 catalog 및 지정한 원격 branch 커밋과 대조한다.
 원격 확인을 생략하거나 필요한 Git 객체/접근 권한이 없으면 해당 검사는 미완료다.
 
 Git 자료의 일치와 CLI 설치/업데이트 성공을 구분한다.
 실제 개별 업데이트 검증에는 대상 외 플러그인의 소스, 버전, 활성화 및 설치 파일 보존을 포함한다.
 
-지원 범위와 실행 방법은 [배포 검사 안내](../tools/references/check-distribution.md),
 설치 및 갱신은 [플러그인 배포 안내](../tools/references/plugin-distribution.md)를 따른다.
 
 ## 스킬 자료 배치

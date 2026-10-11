@@ -49,12 +49,12 @@
 
 ### 작업용 lifecycle 명세서 형식
 
-표준 lifecycle 명세서는 [명세서 형식](../../.agents/skills/skill-lifecycle/references/specification.md)을
+표준 lifecycle 명세서는 [명세서 형식](../../.agents/skills/skill-lifecycle/references/records/specification.md)을
 기준으로 프론트매터, 단계 구조와 기록 제목을 검사할 수 있다.
 단계 문서와 템플릿의 제목 대응도 해당 규격을 기준으로 확인한다.
 
 적용 시점과 자체 수정용 축약 기록의 구분은 같은 문서의
-[최소 형식 검사](../../.agents/skills/skill-lifecycle/references/specification.md#최소-형식-검사)를 따른다.
+[최소 형식 검사](../../.agents/skills/skill-lifecycle/references/records/specification.md#최소-형식-검사)를 따른다.
 형식 검사로 본문의 의미, 실제 승인이나 단계/완료 판단을 대신하지 않는다.
 
 lifecycle 자체의 단계 지침을 수정하면
@@ -155,7 +155,7 @@ Git 관리 경로의 기록을 최종 정리한 뒤에는 현재 보존 묶음�
 그 범위의 주요 동작과 중요한 경계 조건을 확인한다.
 시나리오 수를 고정하지 않고 필요한 항목을 충족하는 사례를 선정한다.
 사용 형태별 시험 환경의 준비와 실행은
-[시나리오 절차](../../.agents/skills/skill-lifecycle/references/scenario-validation.md#시험-환경)를 따른다.
+[시나리오 절차](../../.agents/skills/skill-lifecycle/references/procedures/scenario-validation.md#시험-환경)를 따른다.
 
 계속 제공할 스킬은 다음 항목 중 현재 검증 범위에 해당하는 항목을 적용한다. 통합 또는 폐기로 더 이상 제공하지 않을 스킬은 명세서에 정의된 인식 및 호출 상태가 실제 환경에 반영되었는지 확인한다.
 
@@ -216,7 +216,7 @@ CLI 차이가 특정 동작에 영향을 줄 근거가 있으면 이유와 범�
 
 ## 결과 기록과 완료 판정
 
-검증 결과는 [명세서 형식](../../.agents/skills/skill-lifecycle/references/specification.md#작업-내용과-결과)과
+검증 결과는 [명세서 형식](../../.agents/skills/skill-lifecycle/references/records/specification.md#작업-내용과-결과)과
 해당 단계의 기록 지침에 따라 대상 명세서에 기록한다.
 시험별 상세 자료의 보관과 정리 후 기록도 위 공통 기록 기준을 따른다.
 검증 결과에는 다음 내용을 남긴다.

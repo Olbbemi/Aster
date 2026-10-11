@@ -322,7 +322,7 @@ def check_references(directory, *, completion_report=False):
     try:
         from markdown_it import MarkdownIt
     except ImportError:
-        problem("dependency.markdown", "ERROR", "markdown-it-py가 필요합니다. requirements.txt를 확인하십시오.")
+        problem("dependency.markdown", "ERROR", "markdown-it-py가 필요합니다. .agents/skills/skill-lifecycle/scripts/requirements.txt를 확인하십시오.")
         return report()
     parser = MarkdownIt("commonmark").enable("table")
     # This checker never renders or executes links. Recognize all schemes so

@@ -10,15 +10,15 @@ in_review: false
 
 <!-- 사용 형태와 이름 및 경로를 확정한 뒤 기록 루트에서 이 템플릿으로 명세서를 작성한다.
 제목, name, target_path와 operation의 자리표시자는 실제 작업에 맞게 바꾼다.
-경로와 필드의 기준은 references/work-data.md 및 references/specification.md를 따른다. -->
-<!-- in_review의 적용 시점과 검토 기록은 references/commit-review.md를 따른다. -->
+경로와 필드의 기준은 references/records/work-data.md 및 references/records/specification.md를 따른다. -->
+<!-- in_review의 적용 시점과 검토 기록은 references/procedures/commit-review.md를 따른다. -->
 <!-- current_stage는 references/lifecycle.md의 최초 기록의 단계 판단에 따라 정한다.
 단계 이동 기록에는 최초 상태 산정과 실제 이후 전이를 구분한다. -->
-<!-- 작성 기준: skill-lifecycle 스킬 디렉토리의 references/specification.md, references/lifecycle.md 및 references/stages/<단계 식별자>.md. -->
+<!-- 작성 기준: skill-lifecycle 스킬 디렉토리의 references/records/specification.md, references/lifecycle.md 및 references/stages/<단계 식별자>.md. -->
 <!-- 현재 단계 밖의 선행 논의도 기록하며 내용의 기록 상태와 단계 진입/완료 판단을 구분한다.
-배치와 저장 후 대조는 skill-lifecycle 스킬 디렉토리의 references/specification.md에 있는 "단계별 본문 기록 기준"과 "명세서 작성 시 확인할 사항"을 따른다. -->
+배치와 저장 후 대조는 skill-lifecycle 스킬 디렉토리의 references/records/specification.md에 있는 "단계별 본문 기록 기준"과 "명세서 작성 시 확인할 사항"을 따른다. -->
 
-<!-- 각 단계의 필수 항목은 유지하되 별도 파일의 생성 여부는 references/work-data.md를 따른다.
+<!-- 각 단계의 필수 항목은 유지하되 별도 파일의 생성 여부는 references/records/work-data.md를 따른다.
 상세 정본을 연결해도 목적, 핵심 결정, 실제 결과와 미확인은 이 명세서에서 이해할 수 있게 적는다.
 history 및 단계별 검증 문서를 일괄 생성하지 않는다. -->
 
@@ -79,7 +79,7 @@ history 및 단계별 검증 문서를 일괄 생성하지 않는다. -->
 
 <!-- 필요한 승인 조건과 실제 승인 상태를 구분한다.
 진행 중 기록 형식은 강제하지 않는다.
-완료 시 references/completion-records.md의 "승인 기록 정리"에 따라 체크리스트로 정리한다. -->
+완료 시 references/records/completion-records.md의 "승인 기록 정리"에 따라 체크리스트로 정리한다. -->
 
 ### 각 요건의 충족 여부를 검증할 수 있는 기준
 
@@ -343,7 +343,7 @@ history 및 단계별 검증 문서를 일괄 생성하지 않는다. -->
 
 ## completed (완료)
 
-<!-- 완료 판단 전에 references/completion-records.md에 따라 명세서 전체를 최종 보고서로 정리하고 보존본을 대조한다.
+<!-- 완료 판단 전에 references/records/completion-records.md에 따라 명세서 전체를 최종 보고서로 정리하고 보존본을 대조한다.
 필수 항목을 유지하고 작성 안내 주석은 최종 보고서에서 제거한다. -->
 
 ### 진입 조건 확인

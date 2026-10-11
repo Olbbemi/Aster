@@ -1,13 +1,13 @@
 # check_lifecycle_specification.py
 
-[공통 가이드라인](../guidelines.md)에 따라 lifecycle 명세서, 단계 문서와 템플릿의 형식을 확인할 때 읽는다.
-[검사 코드](../scripts/validation/check_lifecycle_specification.py)는 입력 파일을 읽기만 한다.
+[공통 가이드라인](checks.md)에 따라 lifecycle 명세서, 단계 문서와 템플릿의 형식을 확인할 때 읽는다.
+[검사 코드](../../scripts/check_lifecycle_specification.py)는 입력 파일을 읽기만 한다.
 
 스킬 자체의 `SKILL.md` 검사는 [기본 구조 검사](check-structure.md)를 사용한다.
 
 ## 적용 대상과 시점
 
-[표준 명세서 형식](../../.agents/skills/skill-lifecycle/references/specification.md)에 따라 작성한
+[표준 명세서 형식](../records/specification.md)에 따라 작성한
 명세서, lifecycle 단계 문서 구조 또는 단계 문서와 템플릿의 제목 대응을 확인한다.
 
 - 명세서의 형식 확인이 필요하거나 단계 지침/템플릿을 변경했을 때 필요한 모드를 선택한다.
@@ -16,15 +16,15 @@
 
 ## 입력과 실행
 
-Python과 의존성은 [공통 실행 조건](../guidelines.md#공통-실행-조건)을 따른다.
+Python과 의존성은 [공통 실행 조건](checks.md#공통-실행-조건)을 따른다.
 PyYAML과 markdown-it-py를 사용하며 추가 패키지는 필요하지 않다.
 
-명세서 경로는 호출 위치 기준으로 해석하고 기준 지침은 도구가 속한 저장소에서 읽는다.
+명세서 경로는 호출 위치 기준으로 해석하고 기준 지침은 도구가 속한 skill-lifecycle 디렉토리에서 읽는다.
 
 ```bash
-python3 -B tools/scripts/validation/check_lifecycle_specification.py /absolute/path/specification.md --json
-python3 -B tools/scripts/validation/check_lifecycle_specification.py --check-template --json
-python3 -B tools/scripts/validation/check_lifecycle_specification.py --check-stages --check-template --json
+python3 -B .agents/skills/skill-lifecycle/scripts/check_lifecycle_specification.py /absolute/path/specification.md --json
+python3 -B .agents/skills/skill-lifecycle/scripts/check_lifecycle_specification.py --check-template --json
+python3 -B .agents/skills/skill-lifecycle/scripts/check_lifecycle_specification.py --check-stages --check-template --json
 ```
 
 - 명세서 경로, `--check-template`과 `--check-stages`는 각각 단독 사용하거나 함께 지정할 수 있다.
@@ -36,24 +36,30 @@ python3 -B tools/scripts/validation/check_lifecycle_specification.py --check-sta
 
 | 대상 | 확인하는 형식 | 근거 |
 | --- | --- | --- |
-| 명세서 프론트매터 | YAML 매핑, 다섯 필드의 누락/추가, 값 타입과 operation/current_stage 허용값, in_review boolean | [프론트매터](../../.agents/skills/skill-lifecycle/references/specification.md#프론트매터) |
-| 명세서 본문 | 문서 제목, 단계 식별자/한글 제목과 순서, 공통 및 단계별 기록 제목의 누락/중복 | [전체 구성](../../.agents/skills/skill-lifecycle/references/specification.md#명세서의-전체-구성), [템플릿](../../.agents/skills/skill-lifecycle/references/specification.md#명세서-템플릿) |
-| 템플릿 | 단계 순서와 단계별 기록 제목/순서의 대응 | [생명 주기 순서](../../.agents/skills/skill-lifecycle/references/lifecycle.md#생명-주기-순서)와 각 단계 문서의 명세서 기록 항목 |
-| 단계 문서 (`--check-stages`) | 단계 목록과 파일/문서 제목 대응, 공통 구역과 운영 항목의 누락/중복/순서/제목 단계 | [단계 정의 공통 항목](../../.agents/skills/skill-lifecycle/references/lifecycle.md#단계-정의-공통-항목) |
+| 명세서 프론트매터 | YAML 매핑, 다섯 필드의 누락/추가, 값 타입과 operation/current_stage 허용값, in_review boolean | [프론트매터](../records/specification.md#프론트매터) |
+| 명세서 본문 | 문서 제목, 단계 식별자/한글 제목과 순서, 공통 및 단계별 기록 제목의 누락/중복 | [전체 구성](../records/specification.md#명세서의-전체-구성), [템플릿](../records/specification.md#명세서-템플릿) |
+| 템플릿 | 단계 순서와 단계별 기록 제목/순서의 대응 | [생명 주기 순서](../lifecycle.md#생명-주기-순서)와 각 단계 문서의 명세서 기록 항목 |
+| 단계 문서 (`--check-stages`) | 단계 목록과 파일/문서 제목 대응, 공통 구역과 운영 항목의 누락/중복/순서/제목 단계 | [단계 정의 공통 항목](../lifecycle.md#단계-정의-공통-항목) |
+
+### 명세서 본문
 
 - 단계 목록과 단계별 기록 제목은 기준 문서에서 읽으며 독립 목록을 도구에 복제하지 않는다.
 - 일반 명세서에는 추가 설명 소제목과 관련 자료 절을 허용한다.
 - 필수 기록 제목은 각 단계에 한 번씩 있어야 하며, 본문 내용은 원본 참조로 연결할 수 있다.
 - 기록 항목 내부의 내용과 표를 채웠는지는 판정하지 않는다.
 
+### 단계 문서와 템플릿
+
 - `--check-stages`는 lifecycle 단계 지침 수정 시 사용한다.
   - `references/stages/` 바로 아래의 Markdown 파일 이름을 단계 목록과 대조하고 각 단계 문서를 검사한다.
   - 단계 목록과 운영 항목의 순서는 `lifecycle.md`의 해당 절 첫 최상위 목록에서 읽는다.
   - 운영 항목 안의 `####` 이하 추가 설명 제목은 허용한다.
-- 단계별 기록 항목과 템플릿의 대응은 기존 `--check-template`이 담당한다.
-- 새 옵션을 지정하지 않으면 기존 명세서/템플릿 검사 범위를 유지한다.
+- 단계별 기록 항목과 템플릿의 대응은 `--check-template`이 담당한다.
+- `--check-stages`를 지정하지 않으면 단계 문서의 운영 구조 검사는 수행하지 않는다.
 
-- YAML은 기존 구조 검사기의 안전한 파서와 중복 키 검출을 재사용한다.
+### 파싱과 참조
+
+- YAML은 구조 검사기의 안전한 파서와 중복 키 검출을 재사용한다.
 - Markdown은 참조 검사기의 프론트매터 분리와 제목 텍스트 처리를 재사용한다.
 - 코드 예시, HTML 주석과 인용문 안의 제목은 본문 단계/기록 항목으로 세지 않는다.
 - 링크의 존재와 절 연결은 [참조 검사](check-references.md)에서 확인하며 이 도구에 중복 구현하지 않는다.

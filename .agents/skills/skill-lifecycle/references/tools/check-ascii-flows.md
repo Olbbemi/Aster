@@ -1,17 +1,17 @@
 # check_ascii_flows.py
 
-[공통 가이드라인](../guidelines.md)에 따라 작성한 도식의 문자 형식을 확인할 때 읽는다.
-[검사 코드](../scripts/validation/check_ascii_flows.py)는 입력을 읽기만 한다.
+[공통 가이드라인](checks.md)에 따라 작성한 도식의 문자 형식을 확인할 때 읽는다.
+[검사 코드](../../scripts/check_ascii_flows.py)는 입력을 읽기만 한다.
 
 ## 적용 대상과 실행
 
-[ASCII 도식의 기계 판정](../../standards/skills/skill-validation.md#ascii-도식의-기계-판정)에 따라
+[ASCII 도식의 기계 판정](../../../../../standards/skills/skill-validation.md#ascii-도식의-기계-판정)에 따라
 명시적으로 지정한 Markdown의 `text ascii-flow` fenced code block만 검사한다.
 도식의 정본 파일을 전달하며 여러 파일을 지정할 수 있다.
 같은 실제 파일은 한 번만 읽고 링크를 따라 범위를 확장하지 않는다.
 
 ```bash
-python3 -B tools/scripts/validation/check_ascii_flows.py /absolute/path/design.md /absolute/path/details.md --json
+python3 -B .agents/skills/skill-lifecycle/scripts/check_ascii_flows.py /absolute/path/design.md /absolute/path/details.md --json
 ```
 
 markdown-it-py가 필요하며 Python과 의존성 범위는 공통 가이드라인을 따른다.
@@ -37,4 +37,4 @@ JSON에는 `files`, `diagrams_checked`, `status`, `exit_code`, `checks`와 검�
 
 문자 검사 통과는 연결선 끝점, 분기 의미, 글꼴/뷰어에서의 실제 표시와 가독성 통과가 아니다.
 
-실제 표시 확인은 해당 설계 절차에서 수행한다.
+실제 표시 확인은 [도식 정리와 표시 확인](../procedures/design-artifacts.md#도식-정리와-표시-확인)에 따라 수행한다.

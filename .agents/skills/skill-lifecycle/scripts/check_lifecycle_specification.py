@@ -13,8 +13,8 @@ from check_structure import load_frontmatter
 from check_references import inline_text, markdown_body
 
 
-DEFAULT_LIFECYCLE = Path(__file__).resolve().parents[3] / ".agents/skills/skill-lifecycle"
-SPEC = ".agents/skills/skill-lifecycle/references/specification.md"
+DEFAULT_LIFECYCLE = Path(__file__).resolve().parents[1]
+SPEC = ".agents/skills/skill-lifecycle/references/records/specification.md"
 ORDER = ".agents/skills/skill-lifecycle/references/lifecycle.md#생명-주기-순서"
 STAGE_STRUCTURE = ".agents/skills/skill-lifecycle/references/lifecycle.md#단계-정의-공통-항목"
 STAGE_SECTIONS = ("단계 운영 규칙", "명세서 기록 항목")
@@ -196,7 +196,7 @@ def check_lifecycle_specification(specification=None, *, check_template=False,
         import yaml
         from markdown_it import MarkdownIt
     except ImportError as exc:
-        add("dependency", "ERROR", f"tools/requirements.txt의 의존성이 필요합니다: {exc}")
+        add("dependency", "ERROR", f".agents/skills/skill-lifecycle/scripts/requirements.txt의 의존성이 필요합니다: {exc}")
         return result()
     parser = MarkdownIt("commonmark").enable("table")
     if check_stages:

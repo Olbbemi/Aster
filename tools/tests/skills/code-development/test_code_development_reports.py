@@ -14,7 +14,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 SKILL = ROOT / 'plugins/Camellia/skills/code-development'
 SCRIPT = SKILL / 'scripts/check_reports.py'
 spec = importlib.util.spec_from_file_location('camellia_reports', SCRIPT)
