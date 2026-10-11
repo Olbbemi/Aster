@@ -289,4 +289,3 @@ class RuntimeFixture(unittest.TestCase):
         with self.assertRaises(self.common.DiscoveryError) as caught:
             callable_(*args, **kwargs)
         self.assertEqual(code, caught.exception.code)
-
