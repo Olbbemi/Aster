@@ -129,7 +129,7 @@ Git 운영 도구의 공통 배치는 전역 공통 지침의 "Git 훅 진입점
 | 경로 | 역할 |
 | --- | --- |
 | `tools/scripts/git/` | `post-checkout`, `pre-push` 훅 진입점 |
-| `tools/scripts/git/operations/` | 공유 작업 데이터 준비, 플러그인 버전 검사와 브랜치 자동 전파 구현 |
+| `tools/scripts/git/operations/` | 공유 작업 데이터 준비, 푸시 전 플러그인 버전 및 스킬 검사 호출, 브랜치 자동 전파 구현 |
 | `tools/tests/git/` | Git 운영 도구의 개발용 테스트 |
 | `tools/tests/skills/<스킬명>/` | 해당 스킬의 개발용 테스트 |
 | `tools/references/` | 용도별 파일로 관리하는 도구 사용 안내와 개발용 테스트 안내 |

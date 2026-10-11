@@ -1,5 +1,5 @@
 #!/bin/sh
-# Keep Git's pre-push stdin intact; the checker reads the exact refs being sent.
+# Keep Git's pre-push stdin intact for the shared push checks.
 set -eu
 hook_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-exec python3 -I -B "$hook_dir/operations/check_plugin_versions.py" pre-push "$@"
+exec python3 -I -B "$hook_dir/operations/check_push.py" "$@"

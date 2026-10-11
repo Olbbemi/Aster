@@ -36,12 +36,15 @@
 - 브랜치, 커밋과 PR 작업은 [Git 운영 규칙](.github/git-workflow.md)을 따른다.
 - PR 본문은 [PR 양식](.github/pull_request_template.md)을 사용한다.
 - 플러그인 변경의 사전 검사와 푸시 차단 설정은 [플러그인 버전 확인](.github/git-workflow.md#플러그인-버전-확인)에서 확인한다.
+- 변경된 스킬의 검사 호출과 푸시 차단은 [스킬 푸시 전 검사](tools/references/skill-pre-push.md)를 따른다.
 - main 병합 후 통합 브랜치로 변경을 전파하는 자동화의 동작과 검사 방법은 [main 변경 자동 전파](tools/references/main-propagation.md)에서 확인한다.
 
 ### 스킬 개발과 검사
 
 - 스킬을 만들거나 수정할 때는 [스킬 내부 배치](standards/skills/skill-layout.md), [내용 작성](standards/skills/skill-content.md), [검증](standards/skills/skill-validation.md) 규격을 확인한다.
 - 스킬 개발의 진행과 검사는 [skill-lifecycle](.agents/skills/skill-lifecycle/SKILL.md)의 단계별 절차를 따른다.
+- lifecycle 자체의 푸시 전 검사 범위, 판정 기준과 실행 방법은 [skill-lifecycle 검사 안내](tools/references/skill-lifecycle-validation.md)에서 확인한다.
+  등록된 검사는 해당 스킬 경로가 변경되면 pre-push에서 실행하며 수동 실행도 지원한다.
 
 ### 공용 모델 선택
 
