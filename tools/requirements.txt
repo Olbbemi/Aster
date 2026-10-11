@@ -1,2 +1,1 @@
-PyYAML>=6.0,<7
-markdown-it-py>=3.0,<4
+-r ../.agents/skills/skill-lifecycle/scripts/requirements.txt

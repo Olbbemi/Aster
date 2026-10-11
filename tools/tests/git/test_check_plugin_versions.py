@@ -11,6 +11,7 @@ import unittest
 
 CHECKS = Path(__file__).resolve().parents[2]
 SCRIPT = CHECKS / "scripts/git/operations/check_plugin_versions.py"
+PUSH_CHECKS = CHECKS / "scripts/git/operations/check_push.py"
 HOOK = CHECKS / "scripts/git/pre-push"
 
 
@@ -54,6 +55,7 @@ class PluginVersionTests(unittest.TestCase):
         self.write("tools/scripts/git/pre-push", HOOK.read_text())
         (self.repo / "tools/scripts/git/pre-push").chmod(0o755)
         self.write("tools/scripts/git/operations/check_plugin_versions.py", SCRIPT.read_text())
+        self.write("tools/scripts/git/operations/check_push.py", PUSH_CHECKS.read_text())
 
     def manifest(self, name, version):
         self.write(f"plugins/{name}/.claude-plugin/plugin.json",
