@@ -1,6 +1,6 @@
 {
   "name": "syringa",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "지정 자료에서 일반 기술 지식 후보를 추출하고 승인된 내용을 정리한다.",
   "skills": "./skills/"
 }
