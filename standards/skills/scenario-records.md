@@ -3,7 +3,7 @@
 lifecycle의 동작/호환성 검증에서 요건, 사례와 현재 결과를 기계적으로 대조하는 형식이다.
 
 시나리오 선정, 사용자 확정, 실행, 재시험과 완료 판단은
-[시나리오 준비와 검증 절차](../../.agents/skills/skill-lifecycle/references/scenario-validation.md)를 따른다.
+[시나리오 준비와 검증 절차](../../.agents/skills/skill-lifecycle/references/procedures/scenario-validation.md)를 따른다.
 
 신규 작성하거나 현재 작업 범위에서 보완하는 기록에 적용한다.
 다른 작업의 기존 기록을 일괄 변환하지 않는다.

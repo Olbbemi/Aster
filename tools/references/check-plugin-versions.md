@@ -2,8 +2,10 @@
 
 검사 단위와 판정 기준의 정본은 [Git 운영 규칙](../../.github/git-workflow.md#플러그인-버전-확인)이다.
 
-[검사기](../scripts/git/operations/check_plugin_versions.py)는 Git의 커밋 또는 스테이징 상태를 읽고,
-[pre-push 진입점](../scripts/git/pre-push)은 실제 전송할 ref 정보를 검사기에 전달한다.
+[검사기](../scripts/git/operations/check_plugin_versions.py)는 Git의 커밋 또는 스테이징 상태를 읽는다.
+[pre-push 진입점](../scripts/git/pre-push)은 [푸시 운영 스크립트](../scripts/git/operations/check_push.py)를 호출하며,
+운영 스크립트는 실제 전송할 ref 정보를 이 검사기와 등록된 스킬 검사에 전달한다.
+공통 호출 관계는 [스킬 푸시 전 검사](skill-pre-push.md#목적과-호출-관계)를 따른다.
 
 공통 훅의 실행 환경은 [Hortulanus README](https://github.com/Olbbemi/Hortulanus#readme)의
 지원 환경을 따른다.
@@ -40,7 +42,7 @@ python3 -I -B tools/scripts/git/operations/check_plugin_versions.py check --base
 - `1`: 기준 위반
 - `2`: 실행/입력 오류
 
-`tools/scripts/git/pre-push`는 매 푸시마다 같은 스크립트의 `pre-push` 모드에 Git이 전달한 원격과 ref 정보를 넘긴다.
+푸시 운영 스크립트는 매 푸시마다 이 검사기의 `pre-push` 모드와 같은 구현에 Git이 전달한 원격과 ref 정보를 넘긴다.
 실제 전송할 커밋을 검사하므로 작업 폴더나 스테이징 영역에만 있는 버전 수정은 인정하지 않는다.
 
 여러 ref를 한 번에 보내면 모두 검사하고 하나라도 실패하면 푸시를 중단한다.

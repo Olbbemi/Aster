@@ -89,9 +89,8 @@ Aster 작업을 시작할 때 [공유 작업 데이터 접근](#공유-작업-�
 
 ## 시나리오 자동 전달
 
-사용자가 승인한 시나리오를 별도 Codex CLI로 자동 수행할 때는
-[공통 실행기 사용 계약](tools/references/scenario-runner.md)을 먼저 읽고 따르며,
-`tools/scripts/scenario/scenario_runner.py`를 사용한다.
+skill-lifecycle에서 사용자가 승인한 시나리오를 별도 Codex CLI로 자동 수행할 때는
+해당 스킬의 [시나리오 실행기 사용 계약](.agents/skills/skill-lifecycle/references/tools/scenario-runner.md)을 따른다.
 
 시나리오별 임시 Python 하네스의 샌드박스 밖 실행 허용을 반복 등록하지 않는다.
 실행기 실패나 예상 밖의 결과를 자동 승인으로 덮지 않으며, 범위 변경은 사용자와 확인한다.

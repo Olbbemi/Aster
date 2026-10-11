@@ -36,15 +36,15 @@
 - 브랜치, 커밋과 PR 작업은 [Git 운영 규칙](.github/git-workflow.md)을 따른다.
 - PR 본문은 [PR 양식](.github/pull_request_template.md)을 사용한다.
 - 플러그인 변경의 사전 검사와 푸시 차단 설정은 [플러그인 버전 확인](.github/git-workflow.md#플러그인-버전-확인)에서 확인한다.
+- 변경된 스킬의 검사 호출과 푸시 차단은 [스킬 푸시 전 검사](tools/references/skill-pre-push.md)를 따른다.
 - main 병합 후 통합 브랜치로 변경을 전파하는 자동화의 동작과 검사 방법은 [main 변경 자동 전파](tools/references/main-propagation.md)에서 확인한다.
 
 ### 스킬 개발과 검사
 
 - 스킬을 만들거나 수정할 때는 [스킬 내부 배치](standards/skills/skill-layout.md), [내용 작성](standards/skills/skill-content.md), [검증](standards/skills/skill-validation.md) 규격을 확인한다.
-- 기계 검사 실행 방법은 [검사 스크립트 사용 가이드라인](tools/guidelines.md)을 따른다.
-- 표준 lifecycle 명세서 형식과 단계/템플릿 대응은 [명세서 형식 검사](tools/references/check-lifecycle-specification.md)로 확인할 수 있다.
-- 시나리오 계획/결과의 누락은 [시나리오 기록 대조](tools/references/check-scenario-records.md), 도식의 문자 형식은 [ASCII 도식 검사](tools/references/check-ascii-flows.md)로 확인한다.
-- 검사기 자체를 수정하거나 실행 환경의 영향을 확인할 때는 [검사 스크립트의 개발과 자체 검증](tools/guidelines.md#검사-스크립트의-개발과-자체-검증)을 확인한다.
+- 스킬 개발의 진행과 검사는 [skill-lifecycle](.agents/skills/skill-lifecycle/SKILL.md)의 단계별 절차를 따른다.
+- lifecycle 자체의 푸시 전 검사 범위, 판정 기준과 실행 방법은 [skill-lifecycle 검사 안내](tools/references/skill-lifecycle-validation.md)에서 확인한다.
+  등록된 검사는 해당 스킬 경로가 변경되면 pre-push에서 실행하며 수동 실행도 지원한다.
 
 ### 공용 모델 선택
 
@@ -54,5 +54,5 @@
 
 ### 시나리오 실행
 
-사용자가 승인한 시나리오를 별도 Codex CLI로 자동 수행할 때는
-[시나리오 공통 실행기](tools/references/scenario-runner.md)의 사용 계약과 실행 방법을 확인한다.
+skill-lifecycle에서 사용자가 승인한 시나리오를 별도 Codex CLI로 자동 수행할 때는
+[시나리오 실행기](.agents/skills/skill-lifecycle/references/tools/scenario-runner.md)의 사용 계약과 실행 방법을 확인한다.
