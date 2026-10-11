@@ -25,6 +25,11 @@
 | --- | --- | --- |
 | `common` | 플러그인에 속하지 않는 공용 스킬, 저장소 공통 규격과 도구 | `integrate/common` |
 | `camellia` | Camellia 플러그인의 스킬과 구성, 해당 플러그인 등록 변경 | `integrate/camellia` |
+| `syringa` | Syringa 플러그인의 스킬과 구성, 해당 플러그인 등록 변경 | `integrate/syringa` |
+
+여러 플러그인에 공통으로 적용하는 marketplace 소스 방식과 배포 검사 변경은 `common`에서 관리한다.
+개별 등록 변경과 공통 배포 구조 변경을 구분하며,
+배포 소스 기준은 [플러그인별 배포 소스](../standards/repository-layout.md#플러그인별-배포-소스)를 따른다.
 
 새 플러그인을 관리 대상으로 추가하면 해당 등록 식별자의 통합 브랜치를 둔다.
 공용 스킬이 늘어나는 경우에는 `common`에서 함께 관리하며 스킬별 상설 통합 브랜치를 만들지 않는다.
