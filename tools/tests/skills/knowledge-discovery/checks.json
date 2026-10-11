@@ -1,0 +1,10 @@
+{
+  "scripts": [
+    "check_skill_structure.py",
+    "check_input_scope.py",
+    "check_candidate_approval.py",
+    "check_markdown_output.py",
+    "check_topic_storage.py",
+    "check_cli_execution.py"
+  ]
+}

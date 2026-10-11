@@ -1,0 +1,33 @@
+{
+  "plugin_name": "syringa",
+  "manifest": ".claude-plugin/plugin.json",
+  "files": [
+    ".claude-plugin/plugin.json",
+    "skills/knowledge-discovery/SKILL.md",
+    "skills/knowledge-discovery/references/execution.md",
+    "skills/knowledge-discovery/references/model-selection.md",
+    "skills/knowledge-discovery/references/workflow.md",
+    "skills/knowledge-discovery/references/stages/preparation.md",
+    "skills/knowledge-discovery/references/stages/candidate-proposal.md",
+    "skills/knowledge-discovery/references/stages/approval.md",
+    "skills/knowledge-discovery/references/stages/analysis-and-save.md",
+    "skills/knowledge-discovery/references/stages/completion.md",
+    "skills/knowledge-discovery/scripts/inspect_inputs.py",
+    "skills/knowledge-discovery/scripts/start_run.py",
+    "skills/knowledge-discovery/scripts/read_source.py",
+    "skills/knowledge-discovery/scripts/propose_candidates.py",
+    "skills/knowledge-discovery/scripts/approve_candidates.py",
+    "skills/knowledge-discovery/scripts/save_topic.py",
+    "skills/knowledge-discovery/scripts/run_status.py",
+    "skills/knowledge-discovery/scripts/runtime_common.py",
+    "skills/knowledge-discovery/scripts/source_access.py",
+    "skills/knowledge-discovery/scripts/run_state.py",
+    "skills/knowledge-discovery/scripts/storage_recovery.py"
+  ],
+  "source": {
+    "source": "git-subdir",
+    "url": "https://github.com/Olbbemi/Aster.git",
+    "path": "plugins/Syringa",
+    "ref": "integrate/syringa"
+  }
+}
