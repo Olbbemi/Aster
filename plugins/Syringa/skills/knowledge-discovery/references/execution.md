@@ -1,6 +1,7 @@
 # 실행 계약
 
-이 문서는 실행기가 제공할 명령과 데이터 계약의 정본이다.
+이 문서는 기능별 실행 스크립트의 명령과 데이터 계약의 정본이다.
+호출 시점과 순서는 [진행 흐름](workflow.md)에서 연결하는 단계 문서를 따른다.
 
 - 실행 준비: [환경과 호출](#실행-환경과-호출), [경로와 입력](#경로와-입력).
 - 명령 수행: [응답과 오류](#응답과-오류), [입력 공통 규칙](#입력-객체의-공통-규칙), [명령과 상태](#명령과-실행-상태).
@@ -13,19 +14,20 @@ Linux에서 Python 3.10 이상과 Git을 사용한다.
 Python 표준 라이브러리로 실행하며 별도 AI 서비스나 하네스 SDK에 의존하지 않는다.
 파일 잠금, 심볼릭 링크를 따라가지 않는 디렉토리 핸들과 하드 링크를 이용해 파일을 저장한다.
 
-스킬 디렉토리의 [실행기](../scripts/discovery.py)를 다음과 같이 호출한다.
+스킬 디렉토리의 `scripts/`에 있는 기능별 파일을 직접 호출한다.
+공통 명령 진입점이나 하위 명령 인자를 사용하지 않는다.
 
 ```bash
-python3 -B /absolute/skill/scripts/discovery.py inspect --target /absolute/material --output-root /absolute/git-root
-python3 -B /absolute/skill/scripts/discovery.py start --input /absolute/control/start.json
-python3 -B /absolute/skill/scripts/discovery.py read --run /absolute/run --file /absolute/material/file.md
-python3 -B /absolute/skill/scripts/discovery.py propose --run /absolute/run --input /absolute/control/proposal.json
-python3 -B /absolute/skill/scripts/discovery.py approve --run /absolute/run --input /absolute/control/approval.json
-python3 -B /absolute/skill/scripts/discovery.py save-topic --run /absolute/run --input /absolute/control/topic.json
-python3 -B /absolute/skill/scripts/discovery.py status --run /absolute/run
+python3 -B /absolute/skill/scripts/inspect_inputs.py --target /absolute/material --output-root /absolute/git-root
+python3 -B /absolute/skill/scripts/start_run.py --input /absolute/control/start.json
+python3 -B /absolute/skill/scripts/read_source.py --run /absolute/run --file /absolute/material/file.md
+python3 -B /absolute/skill/scripts/propose_candidates.py --run /absolute/run --input /absolute/control/proposal.json
+python3 -B /absolute/skill/scripts/approve_candidates.py --run /absolute/run --input /absolute/control/approval.json
+python3 -B /absolute/skill/scripts/save_topic.py --run /absolute/run --input /absolute/control/topic.json
+python3 -B /absolute/skill/scripts/run_status.py --run /absolute/run
 ```
 
-예시 경로는 사용자가 지정한 실제 경로와 `start`에서 반환한 `run`으로 바꾼다.
+예시 경로는 사용자가 지정한 실제 경로와 `start_run.py`에서 반환한 `run`으로 바꾼다.
 
 ## 경로와 입력
 
@@ -78,30 +80,34 @@ Git이 판정한 최상위 경로와 입력의 정규화된 실제 경로를 비
 
 ## 명령과 실행 상태
 
-### 명령별 역할
+### 기능별 파일과 역할
 
-| 명령 | 인자 | 입력과 결과 | 변경 범위 |
-| --- | --- | --- | --- |
-| inspect | `--target PATH` 반복, `--output-root PATH` | 필수 입력과 경로 검사, 대상 종류 및 디렉토리 구조 반환. 파일 본문은 읽지 않음 | 없음 |
-| start | `--input JSON_PATH` | 아래 시작 객체 검사. 확정 파일 목록과 내용 해시를 고정하고 `run` 경로 반환 | 새 전용 임시 상태만 생성 |
-| read | `--run PATH --file PATH` | 고정된 파일 목록과 해시를 확인한 뒤 UTF-8 본문 반환 | 없음 |
-| propose | `--run PATH --input JSON_PATH` | 후보 목록을 등록하고 `proposal_digest` 반환 | 실행 상태 |
-| approve | `--run PATH --input JSON_PATH` | 등록된 후보 목록에 대한 승인 ID 집합 고정 | 실행 상태 |
-| save-topic | `--run PATH --input JSON_PATH` | 승인 주제 하나의 상세 내용을 검사하고 파일로 저장 | 실행 상태와 최종 후보 파일 |
-| status | `--run PATH` | 단계, 저장 완료 파일, 실패/미처리 주제, 복구 필요 여부 반환 | 중단된 저장의 대조 결과만 갱신 가능 |
+| 파일 | 응답 command | 인자 | 입력과 결과 | 변경 범위 |
+| --- | --- | --- | --- | --- |
+| `inspect_inputs.py` | `inspect` | `--target PATH` 반복, `--output-root PATH` | 필수 입력과 경로 검사, 대상 종류 및 디렉토리 구조 반환. 파일 본문은 읽지 않음 | 없음 |
+| `start_run.py` | `start` | `--input JSON_PATH` | 아래 시작 객체 검사. 확정 파일 목록과 내용 해시를 고정하고 `run` 경로 반환 | 새 전용 임시 상태만 생성 |
+| `read_source.py` | `read` | `--run PATH --file PATH` | 고정된 파일 목록과 해시를 확인한 뒤 UTF-8 본문 반환 | 없음 |
+| `propose_candidates.py` | `propose` | `--run PATH --input JSON_PATH` | 후보 목록을 등록하고 `proposal_digest` 반환 | 실행 상태 |
+| `approve_candidates.py` | `approve` | `--run PATH --input JSON_PATH` | 등록된 후보 목록에 대한 승인 ID 집합 고정 | 실행 상태 |
+| `save_topic.py` | `save-topic` | `--run PATH --input JSON_PATH` | 승인 주제 하나의 상세 내용을 검사하고 파일로 저장 | 실행 상태와 최종 후보 파일 |
+| `run_status.py` | `status` | `--run PATH` | 단계, 저장 완료 파일, 실패/미처리 주제, 복구 필요 여부 반환 | 중단된 저장의 대조 결과만 갱신 가능 |
+
+응답의 `command`는 위 표의 논리 기능 식별자다.
+파일별 호출에서도 이 값을 유지하며 실행 인자로 전달하지 않는다.
+인자 파싱에 실패하면 `command`는 `null`이다.
 
 ### 실행별 상태와 재개
 
 모든 `JSON_PATH`는 실행별 임시 영역의 제어용 입력이다.
 이를 최종 결과 디렉토리에 보관하지 않는다.
-실행기는 `start`에서 새 전용 임시 디렉토리를 만들고 접근 권한을 사용자 전용으로 제한한다.
+`start_run.py`는 새 전용 임시 디렉토리를 만들고 접근 권한을 사용자 전용으로 제한한다.
 다른 실행의 상태를 자동 발견하거나 재사용하지 않는다.
 같은 실행의 재개는 명시된 `run`으로만 한다.
 임시 상태가 없으면 새 실행과 새 승인이 필요하다.
 
-승인된 후보를 저장하는 기본 순서는 `start -> propose -> approve -> save-topic -> status`다.
-`read`는 후보 추출 및 승인 후 상세 분석에서 사용한다.
-`status`는 실행 생성 이후 언제든 조회할 수 있다.
+같은 `run`을 사용하는 기능들이 상태를 공유한다.
+단계별 호출 순서는 [진행 흐름](workflow.md#기본-순서와-분기)을 따른다.
+`run_status.py`는 실행 생성 이후 언제든 조회할 수 있다.
 실행 상태를 거슬러 후보나 승인 집합을 덮어쓰지 않는다.
 
 ## 시작 객체
