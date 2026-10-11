@@ -6,7 +6,21 @@
   "plugins": [
     {
       "name": "camellia",
-      "source": "./plugins/Camellia"
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Olbbemi/Aster.git",
+        "path": "plugins/Camellia",
+        "ref": "integrate/camellia"
+      }
+    },
+    {
+      "name": "syringa",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Olbbemi/Aster.git",
+        "path": "plugins/Syringa",
+        "ref": "integrate/syringa"
+      }
     }
   ]
 }
