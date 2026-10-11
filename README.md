@@ -45,6 +45,7 @@
 - 스킬 개발의 진행과 검사는 [skill-lifecycle](.agents/skills/skill-lifecycle/SKILL.md)의 단계별 절차를 따른다.
 - lifecycle 자체의 푸시 전 검사 범위, 판정 기준과 실행 방법은 [skill-lifecycle 검사 안내](tools/references/skill-lifecycle-validation.md)에서 확인한다.
   등록된 검사는 해당 스킬 경로가 변경되면 pre-push에서 실행하며 수동 실행도 지원한다.
+- Syringa 스킬의 구조와 실행 계약 검사는 [Knowledge Discovery 푸시 전 검사](tools/references/knowledge-discovery-tests.md)를 따른다.
 
 ### 공용 모델 선택
 
