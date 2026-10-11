@@ -15,6 +15,7 @@ SCRIPTS = Path(__file__).resolve().parents[2] / "scripts/validation"
 sys.path.insert(0, str(SCRIPTS))
 
 from check_distribution import check_distribution
+from check_distribution import DistributionCheck
 
 SCRIPT = SCRIPTS / "check_distribution.py"
 
@@ -284,6 +285,150 @@ class DistributionTests(unittest.TestCase):
         self.assertIn("INCOMPLETE", self.cli().stdout)
         run = subprocess.run([sys.executable,"-B",str(SCRIPT),"--help"], capture_output=True, text=True)
         self.assertEqual(run.returncode, 0)
+
+    def git(self, *args):
+        return subprocess.check_output(
+            ["git", "-C", str(self.repo), "-c", "user.name=Distribution Test",
+             "-c", "user.email=distribution@example.invalid", *args], stderr=subprocess.PIPE).decode().strip()
+
+    def remote_fixture(self):
+        self.source = dict(source="git-subdir", url=self.repo.as_uri(),
+                           path="plugins/Sample", ref="integrate/sample")
+        self.expected_data["source"] = self.source.copy()
+        self.save(self.expected, self.expected_data)
+        for path, data in ((self.codex, self.codex_data), (self.claude, self.claude_data)):
+            data["plugins"][0]["source"] = self.source.copy()
+            self.save(path, data)
+        self.git("init", "-b", "integrate/sample")
+        self.git("add", ".")
+        self.git("commit", "-m", "Initial plugin fixture")
+        return self.git("rev-parse", "HEAD")
+
+    def remote_check(self, **kwargs):
+        return check_distribution(self.plugin, self.repo, self.expected, verify_remote=True, **kwargs)
+
+    def test_remote_branch_snapshot_and_cli(self):
+        commit = self.remote_fixture()
+        result = self.remote_check()
+        self.assertEqual(result["exit_code"], 0, result)
+        self.assertEqual(result["remote_commit"], commit)
+        self.assertEqual(self.cli("--verify-remote", "--json").returncode, 0)
+
+    def test_remote_verification_is_explicit_and_read_only(self):
+        self.remote_fixture()
+        with patch.object(DistributionCheck, "git", side_effect=AssertionError("unexpected Git call")):
+            self.assert_issue(self.check(), "source.remote", "UNCHECKED")
+        before = self.git("status", "--porcelain=v1", "--untracked-files=all")
+        self.assertEqual(self.remote_check()["exit_code"], 0)
+        self.assertEqual(self.git("status", "--porcelain=v1", "--untracked-files=all"), before)
+
+    def test_remote_source_needs_independent_expectation(self):
+        self.remote_fixture()
+        self.expected_data.pop("source")
+        self.save(self.expected, self.expected_data)
+        self.assert_issue(self.remote_check(), "catalog.source", "UNCHECKED")
+
+    def test_remote_wrong_ref_url_or_path_in_either_catalog(self):
+        self.remote_fixture()
+        for path, data in ((self.codex, self.codex_data), (self.claude, self.claude_data)):
+            for field, value in (("ref", "integrate/other"), ("path", "plugins/Other"),
+                                 ("url", "https://example.invalid/other.git")):
+                with self.subTest(path=path, field=field):
+                    changed = copy.deepcopy(data)
+                    changed["plugins"][0]["source"][field] = value
+                    self.save(path, changed)
+                    self.assert_issue(self.remote_check(), "catalog.target")
+            self.save(path, data)
+
+    def test_remote_source_cannot_fall_back_to_local_checkout(self):
+        self.remote_fixture()
+        self.codex_data["plugins"][0]["source"] = "./plugins/Sample"
+        self.save(self.codex, self.codex_data)
+        self.assert_issue(self.remote_check(), "catalog.source")
+
+    def test_invalid_remote_expectations_and_unsupported_fields(self):
+        self.remote_fixture()
+        for source in ({**self.source, "sha": "a" * 40}, {**self.source, "ref": "bad*ref"},
+                       {**self.source, "path": "../outside"}, {**self.source, "url": "ext::command"},
+                       {**self.source, "ref": "branch/../other"}, {**self.source, "url": 123}):
+            with self.subTest(source=source):
+                self.save(self.expected, {**self.expected_data, "source": source})
+                self.assert_issue(self.remote_check(), "input.expectations", "ERROR")
+
+    def test_remote_checkout_content_mode_and_inventory_must_match(self):
+        self.remote_fixture()
+        original = self.skill.read_bytes()
+        self.skill.write_text("unpublished content")
+        self.assert_issue(self.remote_check(), "source.file")
+        self.skill.write_bytes(original)
+        self.skill.chmod(0o755)
+        self.assert_issue(self.remote_check(), "source.file")
+        self.skill.chmod(0o644)
+        # Even a forged local expectation must not hide an extra remote file.
+        extra = self.plugin / "extra.md"
+        extra.write_text("published extra")
+        self.git("add", ".")
+        self.git("commit", "-m", "Add remote file")
+        extra.unlink()
+        self.assert_issue(self.remote_check(), "source.inventory")
+
+    def test_remote_lookup_and_missing_git_objects_are_incomplete(self):
+        self.remote_fixture()
+        with patch.object(DistributionCheck, "git", side_effect=OSError("network unavailable")):
+            self.assert_issue(self.remote_check(), "source.remote", "ERROR")
+        empty = self.root / "empty"
+        empty.mkdir()
+        subprocess.run(["git", "init", str(empty)], capture_output=True, check=True)
+        self.assert_issue(self.remote_check(source_repository=empty), "source.remote", "ERROR")
+
+    def test_missing_remote_branch_is_not_a_local_success(self):
+        self.remote_fixture()
+        self.git("branch", "-m", "renamed")
+        self.assert_issue(self.remote_check(), "source.remote", "ERROR")
+
+    def test_remote_snapshot_can_be_outside_catalog_repository(self):
+        self.remote_fixture()
+        import shutil
+        snapshot = self.root / "snapshot"
+        shutil.copytree(self.plugin, snapshot)
+        result = check_distribution(snapshot, self.repo, self.expected, verify_remote=True)
+        self.assertEqual(result["exit_code"], 0, result)
+        self.expected_data.pop("source")
+        self.save(self.expected, self.expected_data)
+        result = check_distribution(snapshot, self.repo, self.expected)
+        self.assertEqual(result["exit_code"], 2)
+
+    def test_same_repository_branches_resolve_independently(self):
+        first = self.remote_fixture()
+        original = self.skill.read_bytes()
+        self.git("checkout", "-b", "integrate/other")
+        self.skill.write_text("different branch content")
+        self.git("add", ".")
+        self.git("commit", "-m", "Update other branch only")
+        second = self.git("rev-parse", "HEAD")
+        self.git("checkout", "integrate/sample")
+        self.assertEqual(self.remote_check()["remote_commit"], first)
+        self.assertEqual(self.skill.read_bytes(), original)
+        self.source["ref"] = "integrate/other"
+        self.expected_data["source"] = self.source.copy()
+        self.save(self.expected, self.expected_data)
+        for path, data in ((self.codex, self.codex_data), (self.claude, self.claude_data)):
+            data["plugins"][0]["source"] = self.source.copy()
+            self.save(path, data)
+        result = self.remote_check()
+        self.assertEqual(result["remote_commit"], second)
+        self.assert_issue(result, "source.file")
+        self.skill.write_text("different branch content")
+        self.assertEqual(self.remote_check()["exit_code"], 0)
+        self.assertEqual(self.git("rev-parse", "integrate/sample"), first)
+
+    def test_remote_links_and_submodules_are_not_claimed_verified(self):
+        self.remote_fixture()
+        self.skill.unlink()
+        self.skill.symlink_to("../../.claude-plugin/plugin.json")
+        self.git("add", ".")
+        self.git("commit", "-m", "Replace skill with link")
+        self.assert_issue(self.remote_check(), "source.kind", "UNCHECKED")
 
 
 if __name__ == "__main__":

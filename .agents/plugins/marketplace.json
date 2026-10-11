@@ -7,8 +7,24 @@
     {
       "name": "camellia",
       "source": {
-        "source": "local",
-        "path": "./plugins/Camellia"
+        "source": "git-subdir",
+        "url": "https://github.com/Olbbemi/Aster.git",
+        "path": "plugins/Camellia",
+        "ref": "integrate/camellia"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "syringa",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Olbbemi/Aster.git",
+        "path": "plugins/Syringa",
+        "ref": "integrate/syringa"
       },
       "policy": {
         "installation": "AVAILABLE",
