@@ -43,11 +43,15 @@ Codex와 Claude에서 같은 절차를 사용하며 실행 도구의 차이는 �
 
 3. workflow에서 연결한 현재 단계 지침과 작업 조건에 해당하는 상세 지침을 읽고 수행한다.
    실제 적용할 단계 목록과 순서는 대주제 manifest의 해당 작업 항목에 기록된 `stages`로 확인한다.
-   큰 설계와 순차 묶음은 [작업 묶음 지침](references/work-bundles.md)에 따라 공통 뼈대와 현재 묶음 범위를 확인한다.
+   대화 중 질문의 깊이와 분할 후보를 판단할 때부터 [작업 묶음 지침](references/work-bundles.md)을 읽고,
+   공통 뼈대와 현재 결정 범위를 확인한다.
    첫 저장 전 신규 작업은 합의한 시작 단계를 따른다.
 
 4. 연결된 템플릿으로 [저장 시점](references/guidelines.md#report-저장-시점)에 누적 내용을 report에 반영한다.
    workflow의 흐름에 따라 필요한 교차 검증, 완료 확인과 사용자 승인을 거친 뒤 다음 단계나 종료로 연결한다.
+   첫 저장, 재개/단계 진입, 저장 후 제출, 리뷰 수신과 전체 완료에는
+   [시점별 검사와 인자 확보](references/report-checks.md)를 적용한다.
+   필수 인자를 추정하지 않고 실제 실행 결과와 미실행을 구분한다.
 
 ## 항상 지킬 경계
 
@@ -72,10 +76,11 @@ Codex와 Claude에서 같은 절차를 사용하며 실행 도구의 차이는 �
 | [references/workflow.md](references/workflow.md) | 시작/재개 시 진행 흐름과 필요한 지침의 연결을 읽는다. 기본 단계 목록은 이 문서에서 관리한다. |
 | [references/guidelines.md](references/guidelines.md) | 공통 적용과 자료 사용 기준을 확인하고, 주제 선택/기록/승인/회귀 등 현재 작업에 해당하는 절을 읽는다. |
 | [references/design-artifacts.md](references/design-artifacts.md) | 설계 뼈대 기록과 최종 제출 전 구현용 정의, 그룹별 상세와 도식 표시 확인을 수행한다. |
-| [references/work-bundles.md](references/work-bundles.md) | 큰 설계의 뼈대/분할 판단과 같은 주제의 순차 묶음 진입/회귀/전체 완료를 확인한다. |
+| [references/work-bundles.md](references/work-bundles.md) | 대화 중 질문의 깊이와 분할 후보, 설계의 뼈대/분할 판단 및 순차 묶음 진입/회귀/전체 완료를 확인한다. |
 | [references/deferred-work.md](references/deferred-work.md) | 플로우 밖 보류를 합의하거나 전체 완료 전 항목을 이동/정리할 때 읽는다. |
 | [references/legacy-records.md](references/legacy-records.md) | 기존 번호 형식을 조회/재개하거나 요청받은 전환을 수행할 때 읽는다. |
-| [references/report-checks.md](references/report-checks.md) | 저장한 결과의 최종 검토/승인 전이나 재개/다음 단계의 기존 report를 사용할 때 읽기 전용 검사 방법과 판정 범위를 확인한다. |
+| [references/report-checks.md](references/report-checks.md) | 첫 저장, 재개/단계 진입, 저장 후 검토/승인 제출, 리뷰 수신과 전체 완료에 해당하는 실행기, 제공 상태, 인자 출처와 결과 처리를 확인한다. |
+| [references/report-check-contract.md](references/report-check-contract.md) | 검사기를 구현하거나 판정 오류를 조사할 때 인자/수집/개별 판정/출력 계약과 검증 기준을 확인한다. |
 | [references/ai_agents/model-selection.md](references/ai_agents/model-selection.md) | 시작/재개 및 모델이나 담당 범위를 조정할 때 공용표 참조, 작업 묶음별 승인과 실제 적용 확인 및 기록 기준을 읽는다. |
 | [references/ai_agents/review-execution.md](references/ai_agents/review-execution.md) | 교차 검증을 수행하기로 한 경우 상대 CLI의 호출과 결과 확인에 사용한다. |
 | references/stages/ | 현재 단계 지침을 읽는다. 다른 단계는 필요한 입력이나 기준을 확인할 때만 참조한다. |

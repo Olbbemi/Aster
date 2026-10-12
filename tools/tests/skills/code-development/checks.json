@@ -1,0 +1,9 @@
+{
+  "scripts": [
+    "check_skill_structure.py",
+    "check_skill_references.py",
+    "check_report_templates.py",
+    "check_runtime_contract.py",
+    "check_report_rules.py"
+  ]
+}

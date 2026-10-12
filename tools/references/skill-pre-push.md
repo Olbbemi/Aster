@@ -39,8 +39,9 @@ python3 -I -B tools/tests/skills/<스킬명>/<검사 파일>.py \
 기존 lifecycle 검사기는 항목별 `id`, `passed`, `issues`를 제공한다.
 
 입력 계약을 지원하지 않는 기존 회귀 테스트는 등록하지 않는다.
-현재 등록된 스킬은 [skill-lifecycle](skill-lifecycle-validation.md)과
-[knowledge-discovery](knowledge-discovery-tests.md)다.
+현재 등록된 스킬은 [skill-lifecycle](skill-lifecycle-validation.md),
+[knowledge-discovery](knowledge-discovery-tests.md)와
+[code-development](code-development-tests.md)다.
 다른 스킬의 기존 테스트는 해당 스킬 작업에서 기준과 입력 계약을 정한 뒤 등록한다.
 
 검사 구현과 등록은 현재 체크아웃의 파일을 사용한다.
