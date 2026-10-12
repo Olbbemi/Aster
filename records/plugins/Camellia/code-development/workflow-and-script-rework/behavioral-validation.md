@@ -11,7 +11,7 @@
 M5의 검사 자체와 pre-push는 완료한 정형 검증 결과를 사용한다.
 
 스킬이 에이전트에게 요구하는 판단/질문/저장/검사 실행을 실제 대화와 파일에서 관찰한다.
-설치본 발견/업데이트 호환성과 이번 Aster 변경 전체에 대한 독립 Claude 검토는 이후 검증 범위다.
+설치본 발견/업데이트는 [호환성 기록](compatibility-validation.md), Aster 변경의 독립 검토는 회차별 교차 검증 기록의 범위다.
 호출 조건 자체는 변경하지 않았으므로 이번 시험은 명시한 사본을 사용하며 자동 스킬 선택 정확도를 판정하지 않는다.
 
 ## 환경과 실행 조건
@@ -393,10 +393,9 @@ B06의 parent-review-command.txt, parent-review.json, parent-review.stderr와 pa
 B07에는 각 호출의 설정/JSON/stderr와 메모리 결과를 보존했다.
 plugin-copy-audit.json, codex-model-audit.json과 B03/regression-preservation.json은 상위 대조의 보조 근거다.
 
-시험 사본과 실패 로그는 후속 독립 교차 검토에 필요하므로 아직 삭제하지 않는다.
-생성 경로 목록과 이 기록을 기준으로 검토 종료 후 시험 소유 자료만 선별 정리한다.
-준비에 사용한 /tmp/Camellia/prepare-behavior.py도 fixture 구성과 준비 결함의 재현 대조를 위해 해당 검토까지 유지한다.
-실제 Aster 저장소의 커밋/푸시, 설치본과 전역 설정 변경은 수행하지 않았다.
+시험 사본/실패 로그와 /tmp/Camellia/prepare-behavior.py는 최종 사용자 검토 및 이의 재현을 위해 한시 유지한다.
+정리 조건과 대상은 [명세서 완료 근거](specification.md#생명-주기의-완료-여부를-판단한-근거)를 따른다.
+B01-B07의 시험 호출에서는 실제 Aster 커밋/푸시, 설치본과 전역 설정을 변경하지 않았다.
 
 ### 현재 결론과 남은 범위
 
@@ -404,10 +403,13 @@ plugin-copy-audit.json, codex-model-audit.json과 B03/regression-preservation.js
 문서 의미 대조와 실제 동작 관찰에서 추가 제품 수정이 필요한 결함은 발견하지 않았다.
 검사 실행은 자연어 지침에 따른 에이전트의 선택이며 이번 사례의 통과가 향후 누락 없는 실행을 보장하지 않는다.
 이후 5번의 Aster 변경에 대한 독립 Claude 교차 검토와 지적 재현을 수행했다.
-현재 조건부 판정과 보완 사항은 [후속 판단](cross-validation/change-review/round-001/resolution.md)에 기록했다.
-설치본 호환성, 전체 기록 정리 및 최종 판정은 남아 있다.
+1차 지적과 보완은 [1차 판단](cross-validation/change-review/round-001/resolution.md),
+재검토와 N1-N3 보완은 [2차 판단](cross-validation/change-review/round-002/resolution.md)에 기록했다.
+국소 보완은 기존 AI 사례의 선택/저장/호출 시점을 바꾸지 않아 해당 근거를 재사용했고 전체 B01-B07을 반복하지 않았다.
+새 EOF/상태 오류/준비 실패 경계는 추가 정형 사례로 검증했다.
+설치본 K01-K04는 별도로 완료했고 전체 완료 상태는 명세서 최종 관문에서 판단한다.
 
-최종 results 기록 검사는 통과 7개, 현재 대상 필수 미통과 0개로 종료 0/PASS였다.
+B01-B07 수행 직후 results 기록 검사는 통과 7개, 현재 대상 필수 미통과 0개로 종료 0/PASS였다.
 명세서 형식과 기록 묶음의 보존 참조 검사도 종료 0/PASS이며 로컬 참조 35개 통과, 외부 URL 3개 SKIP이다.
 git diff --check에 공백 오류가 없고, 1-3번에서 검증한 Python 소스 16개의 SHA-256이 그대로였다.
 정형 통과를 실제 동작 판정의 대체 근거로 사용하지 않았으며 위 사례별 대조와 함께 확인했다.
